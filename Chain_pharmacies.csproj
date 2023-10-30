@@ -17,7 +17,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
     <Folder Include="Models\Other models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\1.jpg" />
+    <None Include="wwwroot\Images\10.jpg" />
+    <None Include="wwwroot\Images\2.jpg" />
+    <None Include="wwwroot\Images\3.jpg" />
+    <None Include="wwwroot\Images\4.jpg" />
+    <None Include="wwwroot\Images\5.jpg" />
+    <None Include="wwwroot\Images\6.jpg" />
+    <None Include="wwwroot\Images\7.jpg" />
+    <None Include="wwwroot\Images\8.jpg" />
+    <None Include="wwwroot\Images\9.jpg" />
   </ItemGroup>
 
 </Project>

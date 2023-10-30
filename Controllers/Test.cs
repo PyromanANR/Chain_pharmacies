@@ -8,17 +8,18 @@ namespace Chain_pharmacies.Controllers
 {
     public class Test : Controller
     {
-        private readonly NetworkOfPharmaciesContext _db;
+        private readonly NetworkOfPharmaciesContext _context;
 
         public Test(NetworkOfPharmaciesContext db)
         {
-            _db = db;            
+            _context = db;            
         }
 
-        public IActionResult Index()
+        //GET
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Product> objList = _db.Products;
-            return View(objList);
+            var products = await _context.Products.Include(p => p.Brand).Include(p => p.Type).Include(p => p.ProductImages).ToListAsync();
+            return View(products);
         }
     }
 }
