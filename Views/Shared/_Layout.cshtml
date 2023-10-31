@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Chain_pharmacies.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 </head>
 <body>
     <header>
@@ -26,6 +28,22 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Test" asp-action="Index">Privacy</a>
                         </li>
                     </ul>
+                    <!-- Add this section for user icons and buttons -->
+                    <div class="dropdown">
+                        <a class="nav-link text-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i> <!-- Larger user icon -->
+                        </a>
+
+                        <div class="dropdown-menu custom-dropdown" aria-labelledby="dropdownMenuLink">
+                            <p class='dropdown-header'>Зайдіть або Зареєструйтесь для того щоб мати можливість купляти або бронювати товари</p>
+                            <div class='d-flex flex-column align-items-center'>
+                                <a asp-controller="Users" asp-action="Register" class='btn btn-primary w-100 my-1'>Register</a> <!-- Register button -->
+                                <a asp-controller="Test" asp-action="Login" class='btn btn-secondary w-100 my-1'>Login</a> <!-- Login button -->
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </nav>
@@ -38,9 +56,12 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - Chain_pharmacies - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            © 2023 - Chain_pharmacies - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.9.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

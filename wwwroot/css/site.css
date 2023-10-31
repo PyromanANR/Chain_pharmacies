@@ -16,3 +16,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.custom-dropdown {
+    right: 0; /* Adjust this value as needed */
+    border-radius: 0; /* Makes the dropdown menu square */
+}
+
+.dropdown-header {
+    text-align: center; /* Centers the text */
+}
+

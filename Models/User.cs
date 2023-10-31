@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Chain_pharmacies.Models;
 
@@ -7,10 +8,16 @@ public partial class User
 {
     public int Id { get; set; }
 
+    [Required]
+    [StringLength(100)]
     public string Name { get; set; } = null!;
 
+    [Required]
+    [StringLength(100, MinimumLength = 4, ErrorMessage = "Пароль повинен містити від 4 до 100 символів")]
     public string Password { get; set; } = null!;
 
+    [Required]
+    [EmailAddress]
     public string Email { get; set; } = null!;
 
     public int? RoleId { get; set; }
