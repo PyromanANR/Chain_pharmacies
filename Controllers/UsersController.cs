@@ -77,6 +77,16 @@ namespace Chain_pharmacies.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            // Clear user session
+            HttpContext.Session.Clear();
+
+            // Redirect to login page
+            return RedirectToAction(nameof(Login));
+        }
     }
+
 }
+
 
