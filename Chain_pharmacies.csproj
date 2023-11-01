@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\" />
     <Folder Include="Models\Other models\" />
+    <Folder Include="wwwroot\Images\Types_image\" />
   </ItemGroup>
 
   <ItemGroup>

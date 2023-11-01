@@ -9,6 +9,10 @@ public partial class Pharmacy
 
     public string Location { get; set; } = null!;
 
+    public double? Latitude { get; set; } 
+
+    public double? Longitude { get; set; } 
+
     public int? AdminId { get; set; }
 
     public virtual Admin? Admin { get; set; }
