@@ -81,7 +81,6 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
             entity.ToTable("Admin");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.WorkAddress).HasMaxLength(255);
 
             entity.HasOne(d => d.User).WithMany(p => p.Admins)
