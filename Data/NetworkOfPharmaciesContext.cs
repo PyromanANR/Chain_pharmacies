@@ -104,7 +104,6 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
             entity.ToTable("Client");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.PhoneNumber).HasMaxLength(100);
 
             entity.HasOne(d => d.User).WithMany(p => p.Clients)
