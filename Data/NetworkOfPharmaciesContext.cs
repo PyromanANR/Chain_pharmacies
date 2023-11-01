@@ -341,16 +341,21 @@ public partial class NetworkOfPharmaciesContext : DbContext
         modelBuilder.Entity<ProductQuantityInPack>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("ProductQuantityInPack");
+                .HasKey(e => e.ProductId)
+                .HasName("PK_ProductQuantityInPack");
 
-            entity.Property(e => e.ProductId).HasColumnName("Product_Id");
+            entity.ToTable("ProductQuantityInPack");
 
-            entity.HasOne(d => d.Product).WithMany()
-                .HasForeignKey(d => d.ProductId)
+            entity.Property(e => e.ProductId)
+                .ValueGeneratedNever()
+                .HasColumnName("Product_Id");
+
+            entity.HasOne(d => d.Product).WithOne(p => p.ProductQuantityInPack)
+                .HasForeignKey<ProductQuantityInPack>(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ProductQu__Produ__17F790F9");
         });
+
 
         modelBuilder.Entity<SalesMainStorage>(entity =>
         {

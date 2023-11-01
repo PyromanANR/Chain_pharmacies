@@ -29,6 +29,8 @@ public partial class Product
 
     public virtual ProductPriceDiscount? ProductPriceDiscount { get; set; }
 
+    public virtual ProductQuantityInPack? ProductQuantityInPack { get; set; }
+
     public virtual ICollection<SalesMainStorage> SalesMainStorages { get; set; } = new List<SalesMainStorage>();
 
     public virtual ICollection<SalesPharmacy> SalesPharmacies { get; set; } = new List<SalesPharmacy>();

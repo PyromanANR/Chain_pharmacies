@@ -32,7 +32,7 @@ namespace Chain_pharmacies.Controllers
             }
 
             var product = await _context.Products.Include(p => p.Brand).Include(p => p.Type)
-                .Include(p => p.ProductImages).Include(p => p.ProductPriceDiscount).FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.ProductImages).Include(p => p.ProductPriceDiscount).Include(p => p.ProductQuantityInPack).FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();

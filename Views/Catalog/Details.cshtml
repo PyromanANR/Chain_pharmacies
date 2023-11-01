@@ -15,6 +15,7 @@
     <p>@Html.DisplayFor(model => Model.Type.Name)</p>
     <p>@Html.DisplayFor(model => Model.Brand.Name)</p>
     <p>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</p>
+    <p>@Html.DisplayFor(modelItem => Model.ProductQuantityInPack.Quantity)</p>
 </div>
 
 <a href="@Url.Action("Buy", "Order", new { id = Model.Id })">Купити</a>
