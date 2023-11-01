@@ -21,7 +21,7 @@
             <div class="product-card">
                 <h2>@Html.DisplayFor(modelItem => item.Name)</h2>
                 <img class="product-image" src="@Url.Content(item.ProductImages.FirstOrDefault()?.ImagePath)" alt="@item.Name" />
-                <p>@Html.DisplayFor(modelItem => item.ProductPriceDiscount.Price)</p>
+                <p>Ціна: @Html.DisplayFor(modelItem => item.ProductPriceDiscount.Price)</p>
                 <a href="@Url.Action("Details", "Catalog", new { id = item.Id })">View Details</a>
             </div>
         </div>

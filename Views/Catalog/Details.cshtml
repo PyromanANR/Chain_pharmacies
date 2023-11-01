@@ -3,20 +3,79 @@
         width: 400px;
         height: 400px;
         object-fit: cover;
+        margin-right: 40px;
+    }
+
+    .product-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .product-details {
+        flex: 1;
+    }
+
+    .product-details__name {
+        column-span: all;
+    }
+
+    .product-details__item {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .product-buttons {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px; /* Adds a top margin */
+    }
+
+    .product-button {
+        background-color: black; /* Change this to your preferred color */
+        color: white;
+        border: none;
+        padding: 10px 20px; /* Change this to your preferred padding */
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px; /* Change this to your preferred font size */
+        margin: 4px 2px;
+        cursor: pointer;
     }
 </style>
 
 @model Product
 
-<div>
-    <h2>@Html.DisplayFor(model => model.Name)</h2>
+<div class="product-container">
     <img class="product-image" src="@Url.Content(Model.ProductImages.First().ImagePath)" alt="@Model.Name" />
-    <p>@Html.DisplayFor(model => model.Description)</p>
-    <p>@Html.DisplayFor(model => Model.Type.Name)</p>
-    <p>@Html.DisplayFor(model => Model.Brand.Name)</p>
-    <p>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</p>
-    <p>@Html.DisplayFor(modelItem => Model.ProductQuantityInPack.Quantity)</p>
+    <div class="product-details">
+        <h2 class="product-details__name">@Html.DisplayFor(model => model.Name)</h2>
+        <div class="product-details__item">
+            <span>Опис:</span>
+            <span>@Html.DisplayFor(model => model.Description)</span>
+        </div>
+        <div class="product-details__item">
+            <span>Тип товару:</span>
+            <span>@Html.DisplayFor(model => Model.Type.Name)</span>
+        </div>
+        <div class="product-details__item">
+            <span>Бренд:</span>
+            <span>@Html.DisplayFor(model => Model.Brand.Name)</span>
+        </div>
+        <div class="product-details__item">
+            <span>Ціна:</span>
+            <span>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</span>
+        </div>
+        <div class="product-details__item">
+            <span>Кількість в упаковці:</span>
+            <span>@Html.DisplayFor(modelItem => Model.ProductQuantityInPack.Quantity)</span>
+        </div>
+    </div>
 </div>
 
-<a href="@Url.Action("Buy", "Order", new { id = Model.Id })">Купити</a>
-<a href="@Url.Action("Reserve", "Order", new { id = Model.Id })">Забронювати</a>
+<div class="product-buttons">
+    <a class="product-button" href="@Url.Action("Buy", "Order", new { id = Model.Id })"><i class="fa fa-shopping-basket fa-2x" aria-hidden="true"></i> Купити</a>
+    <a class="product-button" href="@Url.Action("Reserve", "Order", new { id = Model.Id })"><i class="fa fa-gavel fa-2x" aria-hidden="true"></i> Забронювати</a>
+</div>
+
+
