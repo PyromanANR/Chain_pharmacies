@@ -1,0 +1,21 @@
+﻿<style>
+    .product-image {
+        width: 400px;
+        height: 400px;
+        object-fit: cover;
+    }
+</style>
+
+@model Product
+
+<div>
+    <h2>@Html.DisplayFor(model => model.Name)</h2>
+    <img class="product-image" src="@Url.Content(Model.ProductImages.First().ImagePath)" alt="@Model.Name" />
+    <p>@Html.DisplayFor(model => model.Description)</p>
+    <p>@Html.DisplayFor(model => Model.Type.Name)</p>
+    <p>@Html.DisplayFor(model => Model.Brand.Name)</p>
+    <p>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</p>
+</div>
+
+<a href="@Url.Action("Buy", "Order", new { id = Model.Id })">Купити</a>
+<a href="@Url.Action("Reserve", "Order", new { id = Model.Id })">Забронювати</a>

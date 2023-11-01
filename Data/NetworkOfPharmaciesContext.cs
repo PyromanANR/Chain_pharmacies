@@ -230,6 +230,8 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasConstraintName("FK__PharmacyS__Pharm__619B8048");
         });
 
+
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Product__3214EC07E3B82BFE");

@@ -1,0 +1,31 @@
+﻿<style>
+    .product-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .product-card {
+        border: 1px solid #000;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
+@model IEnumerable<Product>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="product-card">
+                <h2>@Html.DisplayFor(modelItem => item.Name)</h2>
+                <img class="product-image" src="@Url.Content(item.ProductImages.FirstOrDefault()?.ImagePath)" alt="@item.Name" />
+                <p>@Html.DisplayFor(modelItem => item.ProductPriceDiscount.Price)</p>
+                <a href="@Url.Action("Details", "Catalog", new { id = item.Id })">View Details</a>
+            </div>
+        </div>
+    }
+</div>
+
+
