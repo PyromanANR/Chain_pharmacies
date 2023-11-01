@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Newtonsoft.Json;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -29,21 +31,44 @@
                         </li>
                     </ul>
                     <!-- Add this section for user icons and buttons -->
+                    @if (Context.Session.GetString("User") == null)
+                    {
                     <div class="dropdown">
                         <a class="nav-link text-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i> <!-- Larger user icon -->
+                            <i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i> 
                         </a>
 
                         <div class="dropdown-menu custom-dropdown" aria-labelledby="dropdownMenuLink">
                             <p class='dropdown-header'>Зайдіть або Зареєструйтесь для того щоб мати можливість купляти або бронювати товари</p>
                             <div class='d-flex flex-column align-items-center'>
                                 <a asp-controller="Users" asp-action="Register" class='btn btn-primary w-100 my-1'>Register</a> <!-- Register button -->
-                                <a asp-controller="Test" asp-action="Login" class='btn btn-secondary w-100 my-1'>Login</a> <!-- Login button -->
+                                <a asp-controller="Users" asp-action="Login" class='btn btn-secondary w-100 my-1'>Login</a> <!-- Login button -->
                             </div>
                         </div>
-                    </div>
+                        </div>
+                    }
+                    else
+                    {
+                        var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User"));
+                        <div class="d-flex align-items-center">
+                            <span style="margin-right: 10px;">@user.Name</span>
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i>
+                            </a>
+                            <div class="dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                </a>
 
+                                <div class="dropdown-menu custom-dropdown" aria-labelledby="dropdownMenuLink">
+                                    <div class='d-flex flex-column align-items-center'>
+                                        <a asp-controller="Users" asp-action="Logout" class='btn btn-primary w-100 my-1'>Logout</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>
