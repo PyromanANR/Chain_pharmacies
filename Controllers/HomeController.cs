@@ -20,8 +20,7 @@ namespace Chain_pharmacies.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var types = await _context.Types.ToListAsync();
-            return View(types);
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

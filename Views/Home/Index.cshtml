@@ -1,49 +1,12 @@
-﻿@model IEnumerable< Chain_pharmacies.Models.Type>
-
+﻿
 <partial name="Notification" />
 
-@{
-    ViewData["Title"] = "Home Page";
-}
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
-@{
-    var imageUrls = new string[]
-        {
-    "https://root.tblcdn.com/icons/category/c700d3d9-a353-438a-aebb-6906bf42e10a/img_0.png?v=AAAAAAnmWC0",
-    "https://root.tblcdn.com/icons/category/ba1fb752-c42f-4580-a3d7-37b5ab977e74/img_0.png?v=AAAAAAnmWHo",
-    "https://root.tblcdn.com/icons/category/c8b01654-b691-4bf2-8d2a-0da811ccd1e2/img_0.png?v=AAAAAAox8GI",
-    "https://root.tblcdn.com/icons/category/2882e8c6-ec47-4cda-9a49-09ed62e65764/img_0.png?v=AAAAAAnmWBs",
-    "https://root.tblcdn.com/icons/category/45f7dd3e-f9a9-4647-a997-7ec5d9a484e5/img_0.png?v=AAAAAAnmV9o",
-    "https://root.tblcdn.com/icons/category/8302eb6f-5585-4149-89ec-6a4762dc9bfc/img_0.png?v=AAAAAAox20",
-     "https://root.tblcdn.com/icons/category/ba1fb752-c42f-4580-a3d7-37b5ab977e74/img_0.png?v=AAAAAAnmWHo",
-    "https://root.tblcdn.com/icons/category/e2ad93da-2556-11ea-baa5-000c29ab36d9/img_0.png?v=AAAAAAnmWB8",
-    "https://root.tblcdn.com/icons/category/c700d3d9-a353-438a-aebb-6906bf42e10a/img_0.png?v=AAAAAAnmWC0",
-    "https://root.tblcdn.com/icons/category/c8b01654-b691-4bf2-8d2a-0da811ccd1e2/img_0.png?v=AAAAAAox8GI"
-        };
 
-}
-
-
-    <h2>Типи товарів у наявності</h2>
-<ul class="menu-small__level-one" style="padding-left: 0;">
-        @for (int i = 0; i < Model.Count(); i++)
-        {
-            var type = Model.ElementAt(i);
-            <li>
-                <div class="menu__item">
-                    <div class="img-container">
-                        <img src="@imageUrls[i]" alt="@type.Name" width="42" height="42" />
-                    </div>
-                    <span>@type.Name</span>
-                </div>
-            </li>
-        }
-</ul>
 
 
 

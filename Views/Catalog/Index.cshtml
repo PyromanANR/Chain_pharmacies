@@ -9,23 +9,107 @@
         border: 1px solid #000;
         padding: 10px;
         margin-bottom: 10px;
+        position: relative;
+    }
+
+    .discount-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: #f00; /* Change this to your desired background color */
+        color: #fff; /* Change this to your desired text color */
+        padding: 5px;
+    }
+
+    .no-gutters {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+        .no-gutters > .col,
+        .no-gutters > [class*="col-"] {
+            padding-right: 0;
+            padding-left: 0;
+        }
+
+    .top-margin {
+        margin-top: 20px;
     }
 </style>
+@{
+    var imageUrls = new string[]
+        {
+    "https://root.tblcdn.com/icons/category/c700d3d9-a353-438a-aebb-6906bf42e10a/img_0.png?v=AAAAAAnmWC0",
+    "https://root.tblcdn.com/icons/category/ba1fb752-c42f-4580-a3d7-37b5ab977e74/img_0.png?v=AAAAAAnmWHo",
+    "https://root.tblcdn.com/icons/category/c8b01654-b691-4bf2-8d2a-0da811ccd1e2/img_0.png?v=AAAAAAox8GI",
+    "https://root.tblcdn.com/icons/category/2882e8c6-ec47-4cda-9a49-09ed62e65764/img_0.png?v=AAAAAAnmWBs",
+    "https://root.tblcdn.com/icons/category/45f7dd3e-f9a9-4647-a997-7ec5d9a484e5/img_0.png?v=AAAAAAnmV9o",
+    "https://root.tblcdn.com/icons/category/8302eb6f-5585-4149-89ec-6a4762dc9bfc/img_0.png?v=AAAAAAox20",
+     "https://root.tblcdn.com/icons/category/ba1fb752-c42f-4580-a3d7-37b5ab977e74/img_0.png?v=AAAAAAnmWHo",
+    "https://root.tblcdn.com/icons/category/e2ad93da-2556-11ea-baa5-000c29ab36d9/img_0.png?v=AAAAAAnmWB8",
+    "https://root.tblcdn.com/icons/category/c700d3d9-a353-438a-aebb-6906bf42e10a/img_0.png?v=AAAAAAnmWC0",
+    "https://root.tblcdn.com/icons/category/c8b01654-b691-4bf2-8d2a-0da811ccd1e2/img_0.png?v=AAAAAAox8GI"
+        };
 
-@model IEnumerable<Product>
+}
 
-<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-4">
-            <div class="product-card">
-                <h2>@Html.DisplayFor(modelItem => item.Name)</h2>
-                <img class="product-image" src="@Url.Content(item.ProductImages.FirstOrDefault()?.ImagePath)" alt="@item.Name" />
-                <p>Ціна: @Html.DisplayFor(modelItem => item.ProductPriceDiscount.Price)</p>
-                <a href="@Url.Action("Details", "Catalog", new { id = item.Id })">View Details</a>
-            </div>
+@model Chain_pharmacies.Controllers.CatalogController.CatalogIndexViewModel
+
+<div class="row no-gutters">
+    <div class="col-md-3" >
+        <h2>Фільтрація</h2>
+        @using (Html.BeginForm("Index", "Catalog", FormMethod.Post))
+        {
+            <p>
+                Price:
+                @Html.TextBox("minPrice") - @Html.TextBox("maxPrice")
+            </p>
+            <p>
+                Type:
+                @Html.TextBox("type")
+            </p>
+            <input type="submit" value="Filter" />
+        }
+        <h2 class="top-margin">Типи товарів у наявності</h2>
+        <ul class="menu-small__level-one" style="padding-left: 0;">
+            @for (int i = 0; i < Model.Types.Count(); i++)
+            {
+                var type = Model.Types.ElementAt(i);
+                <li>
+                    <div class="menu__item">
+                        <div class="img-container">
+                            <img src="@imageUrls[i]" alt="@type.Name" width="42" height="42" />
+                        </div>
+                        <span>@type.Name</span>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="col-md-9">
+        <div class="row">
+            @foreach (var item in Model.Products)
+            {
+                <div class="col-md-4">
+                    <div class="product-card">
+                        @if (item.ProductPriceDiscount.Discount != 0)
+                        {
+                            <div class="discount-badge">
+                                <i class="fa fa-percent" aria-hidden="true"></i>
+                                @Html.DisplayFor(modelItem => item.ProductPriceDiscount.Discount)
+                            </div>
+                        }
+                        <h2>@Html.DisplayFor(modelItem => item.Name)</h2>
+                        <img class="product-image" src="@Url.Content(item.ProductImages.FirstOrDefault()?.ImagePath)" alt="@item.Name" />
+                        <p>Ціна: @Html.DisplayFor(modelItem => item.ProductPriceDiscount.Price)</p>
+                        <a href="@Url.Action("Details", "Catalog", new { id = item.Id })">View Details</a>
+                    </div>
+                </div>
+            }
         </div>
-    }
+    </div>
 </div>
+
 
 

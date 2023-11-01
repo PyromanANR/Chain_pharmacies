@@ -42,12 +42,32 @@
         margin: 4px 2px;
         cursor: pointer;
     }
+
+    .discount-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: #f00; /* Change this to your desired background color */
+        color: #fff; /* Change this to your desired text color */
+        padding: 5px;
+    }
+
 </style>
 
 @model Product
 
+
 <div class="product-container">
-    <img class="product-image" src="@Url.Content(Model.ProductImages.First().ImagePath)" alt="@Model.Name" />
+    <div style="position: relative;">
+        <img class="product-image" src="@Url.Content(Model.ProductImages.First().ImagePath)" alt="@Model.Name" />
+        @if (Model.ProductPriceDiscount.Discount > 0)
+        {
+            <div class="discount-badge" style="position: absolute; bottom: 0; left: 0;">
+                <i class="fa fa-percent" aria-hidden="true"></i>
+                @Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Discount)
+            </div>
+        }
+    </div>
     <div class="product-details">
         <h2 class="product-details__name">@Html.DisplayFor(model => model.Name)</h2>
         <div class="product-details__item">
@@ -64,7 +84,17 @@
         </div>
         <div class="product-details__item">
             <span>Ціна:</span>
-            <span>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</span>
+            @if (Model.ProductPriceDiscount.Discount > 0)
+            {
+                <span>
+                    <del>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</del>
+                    @Model.ProductPriceDiscount.GetDiscountedPrice()
+                </span>
+            }
+            else
+            {
+                <span>@Html.DisplayFor(modelItem => Model.ProductPriceDiscount.Price)</span>
+            }
         </div>
         <div class="product-details__item">
             <span>Кількість в упаковці:</span>
