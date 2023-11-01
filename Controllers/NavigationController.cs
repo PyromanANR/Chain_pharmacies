@@ -6,15 +6,31 @@ using System.Globalization;
 
 namespace Chain_pharmacies.Controllers
 {
-    public class GeocodeData
+    public class LatLng
     {
         public string Lat { get; set; }
-        public string Lon { get; set; }
+        public string Lng { get; set; }
+    }
+
+    public class Location
+    {
+        public LatLng LatLng { get; set; }
+    }
+
+    public class Result
+    {
+        public List<Location> Locations { get; set; }
+    }
+
+    public class MapQuestResponse
+    {
+        public List<Result> Results { get; set; }
     }
 
     public class NavigationController : Controller
     {
         private readonly NetworkOfPharmaciesContext _context;
+        private readonly string _mapQuestApiKey = "GUBE6KOgB02K5nwAAlKkkvT8QJZZHBim";
 
         public NavigationController(NetworkOfPharmaciesContext context)
         {
@@ -27,19 +43,19 @@ namespace Chain_pharmacies.Controllers
 
             foreach (var pharmacy in pharmacies)
             {
-                var requestUrl = $"https://nominatim.openstreetmap.org/search?format=json&q={pharmacy.Location}";
+                var requestUrl = $"http://www.mapquestapi.com/geocoding/v1/address?key={_mapQuestApiKey}&location={pharmacy.Location}";
                 using (var httpClient = new HttpClient())
                 {
                     var response = await httpClient.GetStringAsync(requestUrl);
-                    var geocodeData = JsonConvert.DeserializeObject<List<GeocodeData>>(response);
-                    pharmacy.Latitude = double.Parse(geocodeData[0].Lat, CultureInfo.InvariantCulture);
-                    pharmacy.Longitude = double.Parse(geocodeData[0].Lon, CultureInfo.InvariantCulture);
+                    var mapQuestResponse = JsonConvert.DeserializeObject<MapQuestResponse>(response);
+                    var latLng = mapQuestResponse.Results[0].Locations[0].LatLng;
+                    pharmacy.Latitude = double.Parse(latLng.Lat, CultureInfo.InvariantCulture);
+                    pharmacy.Longitude = double.Parse(latLng.Lng, CultureInfo.InvariantCulture);
                 }
             }
 
             return View(pharmacies);
         }
-
-
     }
 }
+

@@ -1,11 +1,23 @@
 ﻿@model IEnumerable<Pharmacy>
 
-<div id="map" style="height: 500px;"></div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pharmacy Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
 
-@section Scripts {
+    <div id="map" style="height: 500px;"></div>
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([50.4501, 30.5234], 13); // Coordinates for Kyiv
+        var map = L.map('map').setView([50.4501, 30.5234], 12); // Set the initial view to Kyiv
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -15,9 +27,11 @@
         {
             <text>
                 L.marker([@pharmacy.Latitude, @pharmacy.Longitude]).addTo(map)
-                    .bindPopup("@pharmacy.Location");
+                    .bindPopup("@Html.Raw(pharmacy.Location)");
             </text>
         }
     </script>
-}
+
+</body>
+</html>
 
