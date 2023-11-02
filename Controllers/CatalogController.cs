@@ -24,21 +24,11 @@ namespace Chain_pharmacies.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var products = await _context.Products.Include(p => p.Brand).Include(p => p.Type).Include(p => p.ProductImages).Include(p => p.ProductPriceDiscount).ToListAsync();
-            var productTypes = await _context.Types.ToListAsync();
+            // Отримання значень з TempData
+            int? minPrice = TempData["minPrice"] as int?;
+            int? maxPrice = TempData["maxPrice"] as int?;
+            string type = TempData["type"] as string;
 
-            var model = new CatalogIndexViewModel
-            {
-                Products = products,
-                Types = productTypes
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Index(int? minPrice, int? maxPrice, string type)
-        {
             IQueryable<Product> products = _context.Products.Include(p => p.Brand).Include(p => p.Type).Include(p => p.ProductImages).Include(p => p.ProductPriceDiscount);
 
             if (minPrice.HasValue)
@@ -65,6 +55,17 @@ namespace Chain_pharmacies.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(int? minPrice, int? maxPrice, string type)
+        {
+            // Збереження значень в TempData
+            TempData["minPrice"] = minPrice;
+            TempData["maxPrice"] = maxPrice;
+            TempData["type"] = type;
+
+            return RedirectToAction("Index");
         }
 
         // GET: Details
