@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Chain_pharmacies.Models;
 
@@ -24,6 +25,7 @@ public partial class User
 
     public virtual ICollection<Admin> Admins { get; set; } = new List<Admin>();
 
+    [JsonIgnore]
     public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
     public virtual ICollection<MainAdmin> MainAdmins { get; set; } = new List<MainAdmin>();

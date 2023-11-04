@@ -1,0 +1,104 @@
+﻿@model Chain_pharmacies.Controllers.ProfileController.UserProfileViewModel
+@using Newtonsoft.Json.Linq;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #45a049;
+            }
+    </style>
+</head>
+<body>
+    @Html.Partial("~/Views/Shared/Notification.cshtml")
+    <h2>Profile</h2>
+    <form asp-action="Index" asp-controller="Profile">
+        <div>
+            <label asp-for="Name"></label>
+            <input asp-for="Name" readonly />
+        </div>
+        <div>
+            <label asp-for="Email"></label>
+            <input asp-for="Email" readonly />
+        </div>
+    </form>
+
+    <form asp-action="UpdatePhoneNumber" asp-controller="Profile">
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Name" type="hidden" />
+        <input asp-for="Email" type="hidden" />
+        <input asp-for="Items" type="hidden" />
+
+        <div>
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber" />
+        </div>
+
+        <button type="submit">Update Phone Number</button>
+    </form>
+
+    <form asp-action="UpdateReceipts" asp-controller="Profile" enctype="multipart/form-data">
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Name" type="hidden" />
+        <input asp-for="Email" type="hidden" />
+        <input asp-for="PhoneNumber" type="hidden" />
+        <input asp-for="Items" type="hidden" />
+
+        <div>
+            <label for="receiptsFile">Receipts</label>
+            <input id="receiptsFile" type="file" name="receiptsFile" />
+        </div>
+
+        <button type="submit">Update Receipts</button>
+
+        @Html.ValidationMessage("receiptsFile")
+    </form>
+
+    @if (Model.Items != null)
+    {
+        <div>
+            <h3>Receipts</h3>
+            <ul>
+                @foreach (var item in Model.Items)
+                {
+                    <li>@item</li>
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <h3>Receipts not added</h3>
+    }
+</body>
+</html>

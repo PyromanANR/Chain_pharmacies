@@ -60,7 +60,7 @@
                         var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User"));
                         <div class="d-flex align-items-center">
                             <span style="margin-right: 10px;">@user.Name</span>
-                            <a asp-controller="Home" asp-action="Index">
+                            <a asp-controller="Profile" asp-action="Index">
                                 <i class="fa fa-user-circle-o fa-3x" aria-hidden="true"></i>
                             </a>
                             <div class="dropdown">
