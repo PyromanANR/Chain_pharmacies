@@ -50,7 +50,7 @@
         @if (Model.Quantity > 0)
         {
             <div class="product-quantity">
-                <h3>Кількість:</h3>
+                <h3>Кількість в одній упаковці:</h3>
                 <p>@Model.Quantity</p>
             </div>
         }
@@ -65,7 +65,7 @@
         {
             <div class="product-price">
                 <h3>Ціна:</h3>
-                <p>@Model.Price</p>
+                <p id="price"></p>
             </div>
         }
         <button id="choosePharmacyButton" onclick="choosePharmacy()">Choose Pharmacy</button>
@@ -76,6 +76,16 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
     <script>
+        var price = @Model.Price;
+        var quantityInput = document.getElementById('quantity-1');
+        function updatePrice() {
+            var quantity = quantityInput.value;
+            var totalPrice = price * quantity;
+            document.getElementById('price').innerText = totalPrice;
+        }
+        quantityInput.addEventListener('input', updatePrice);
+        updatePrice();
+
         function changeStep(productId, packQuantity) {
             var quantityInput = document.getElementById('quantity-1');
             if (quantityInput.step == packQuantity.toString()) {
