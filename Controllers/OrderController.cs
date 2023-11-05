@@ -1,8 +1,10 @@
 ﻿using Chain_pharmacies.Data;
 using Chain_pharmacies.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Chain_pharmacies.Controllers
 {
@@ -27,6 +29,10 @@ namespace Chain_pharmacies.Controllers
 
             public ProductQuantityInPack ProductQuantityInPack { get; set; }
         }
+        public class Receipt
+        {
+            public List<string> Items { get; set; }
+        }
 
 
         public ActionResult Index()
@@ -39,8 +45,10 @@ namespace Chain_pharmacies.Controllers
                 return RedirectToAction("Login", "Users");
             }
 
-            var user = JsonConvert.DeserializeObject<User>(userJson);
+            var user = JsonConvert.DeserializeObject<User>(userJson);           
             var clientId = user.Id;
+
+       
 
             // Get the user's cart
             var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
@@ -87,6 +95,7 @@ namespace Chain_pharmacies.Controllers
 
             var user = JsonConvert.DeserializeObject<User>(userJson);
             var clientId = user.Id;
+            var client = _context.Clients.FirstOrDefault(c => c.UserId == user.Id);
 
             // Find the user's cart, or create a new one if it doesn't exist
             var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
@@ -104,7 +113,8 @@ namespace Chain_pharmacies.Controllers
 
             // Add the product to the cart
             var productInCart = _context.ProductInCarts
-     .FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == product.Id);
+                 .Include(pic => pic.Product)
+                 .FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == product.Id);
 
             if (productInCart == null)
             {
@@ -122,6 +132,33 @@ namespace Chain_pharmacies.Controllers
                 TempData["Message"] = "Цей продукт вже є в корзині!";
                 return RedirectToAction("Index", "Catalog");
             }
+
+
+            // Assuming you have a List<string> of items
+            List<string> items = new List<string> { "Флуоксетин", "Інфлювак", "Амоксіцилін" };
+            string productName = productInCart.Product.Name;
+            if (items.Contains(productName))
+            {
+                try
+                {
+                    if (!client.Receipts.Any(receiptJson =>
+                    {
+                        string receiptsString = new string(client.Receipts.ToArray());
+                        var receipt = JsonConvert.DeserializeObject<Receipt>(receiptsString);
+                        return receipt.Items.Any(item => item == productName);
+                    }))
+                    {
+                        TempData["Message"] = "Для того щоб купити цей товар " + productInCart.Product.Name.ToString() + " потрібен рецепт від лікаря. Додайте його в особистому кабінеті!";
+                        return RedirectToAction("Login", "Users");
+                    }
+                }
+                catch 
+                {
+                    TempData["Message"] = "Для того щоб купити цей товар " + productInCart.Product.Name.ToString() + " потрібен рецепт від лікаря. Додайте його в осибистому кабінеті! ";
+                    return RedirectToAction("Index", "Order");
+                }
+            }
+           
 
             _context.SaveChanges();
 
