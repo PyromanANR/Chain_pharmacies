@@ -13,5 +13,5 @@ public partial class UserCart
 
     public decimal TotalPrice { get; set; }
 
-    public virtual User? User { get; set; }
+    public virtual User? Client { get; set; }
 }

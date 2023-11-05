@@ -298,7 +298,7 @@ namespace Chain_pharmacies.Controllers
                 ClientId = userCart.ClientId,
                 Date = userCart.Date,
                 TotalPrice = userCart.TotalPrice,
-                User = userCart.User,
+                Client = userCart.Client,
                 Orders = new List<Order>()
             };
 

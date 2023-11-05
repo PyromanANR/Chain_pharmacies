@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Configuration;
 using Chain_pharmacies.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Console;
+
 
 namespace Chain_pharmacies.Data;
 
+
 public partial class NetworkOfPharmaciesContext : DbContext
 {
-
     public NetworkOfPharmaciesContext()
     {
 
@@ -17,6 +22,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
     public NetworkOfPharmaciesContext(DbContextOptions<NetworkOfPharmaciesContext> options)
         : base(options)
     {
+
     }
 
     public virtual DbSet<Admin> Admins { get; set; }
@@ -47,9 +53,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     public virtual DbSet<ProductInCart> ProductInCarts { get; set; }
 
-    public virtual DbSet<ProductInOrder> ProductInOrders { get; set; }
-
     public virtual DbSet<ProductInMainStorage> ProductInMainStorages { get; set; }
+
+    public virtual DbSet<ProductInOrder> ProductInOrders { get; set; }
 
     public virtual DbSet<ProductInStorage> ProductInStorages { get; set; }
 
@@ -61,7 +67,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     public virtual DbSet<SalesPharmacy> SalesPharmacies { get; set; }
 
-    public virtual DbSet<Models.Type> Types { get; set; }
+    public virtual DbSet<Chain_pharmacies.Models.Type> Types { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -72,22 +78,17 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
 
 
-
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Admin>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Admin__3214EC07898C6549");
-
             entity.ToTable("Admin");
 
             entity.Property(e => e.WorkAddress).HasMaxLength(255);
 
             entity.HasOne(d => d.User).WithMany(p => p.Admins)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Admin__UserId__3F466844");
+                .HasConstraintName("FK__Tmp_Admin__UserI__3B40CD36");
         });
 
         modelBuilder.Entity<Brand>(entity =>
@@ -101,15 +102,13 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
         modelBuilder.Entity<Client>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Client__3214EC076A6DB3FA");
-
             entity.ToTable("Client");
 
-            entity.Property(e => e.PhoneNumber).HasMaxLength(100);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(15);
 
             entity.HasOne(d => d.User).WithMany(p => p.Clients)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Client__UserId__3C69FB99");
+                .HasConstraintName("FK__Tmp_Clien__UserI__3493CFA7");
         });
 
         modelBuilder.Entity<MainAdmin>(entity =>
@@ -169,10 +168,22 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasConstraintName("FK_Orders_Order_Cart");
         });
 
-        modelBuilder.Entity<ProductInOrder>()
-        .HasKey(p => new { p.CartId, p.ProductId });
+        modelBuilder.Entity<OrderCart>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Order_Ca__3214EC07F510645C");
 
+            entity.ToTable("Order_Cart");
 
+            entity.Property(e => e.ClientId).HasColumnName("Client_id");
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.TotalPrice)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Total_Price");
+
+            entity.HasOne(d => d.Client).WithMany(p => p.OrderCarts)
+                .HasForeignKey(d => d.ClientId)
+                .HasConstraintName("FK__Order_Car__Clien__681373AD");
+        });
 
         modelBuilder.Entity<OrderRequest>(entity =>
         {
@@ -219,8 +230,6 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasForeignKey(d => d.PharmacyId)
                 .HasConstraintName("FK__PharmacyS__Pharm__619B8048");
         });
-
-
 
         modelBuilder.Entity<Product>(entity =>
         {
@@ -290,6 +299,21 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasConstraintName("FK__ProductIn__Stora__71D1E811");
         });
 
+        modelBuilder.Entity<ProductInOrder>(entity =>
+        {
+            entity.HasKey(e => new { e.CartId, e.ProductId }).HasName("PK__ProductI__6F2808E24AF04F53");
+
+            entity.ToTable("ProductInOrder");
+
+            entity.Property(e => e.CartId).HasColumnName("Cart_Id");
+            entity.Property(e => e.ProductId).HasColumnName("Product_Id");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductInOrders)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ProductIn__Produ__6BE40491");
+        });
+
         modelBuilder.Entity<ProductInStorage>(entity =>
         {
             entity.HasKey(e => new { e.StorageId, e.ProductId }).HasName("PK__ProductI__937E8388051D1143");
@@ -330,9 +354,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
         modelBuilder.Entity<ProductQuantityInPack>(entity =>
         {
-            entity
-                .HasKey(e => e.ProductId)
-                .HasName("PK_ProductQuantityInPack");
+            entity.HasKey(e => e.ProductId);
 
             entity.ToTable("ProductQuantityInPack");
 
@@ -345,7 +367,6 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ProductQu__Produ__17F790F9");
         });
-
 
         modelBuilder.Entity<SalesMainStorage>(entity =>
         {
@@ -389,7 +410,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasConstraintName("FK__Sales_Pha__Produ__68487DD7");
         });
 
-        modelBuilder.Entity<Models.Type>(entity =>
+        modelBuilder.Entity<Chain_pharmacies.Models.Type>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Type__3214EC07E72711B5");
 
@@ -413,7 +434,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
         modelBuilder.Entity<UserCart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__User_Car__3214EC0785C6893C");
+            entity.HasKey(e => e.Id).HasName("PK__User_Car__3214EC07B280D8F5");
 
             entity.ToTable("User_Cart");
 
@@ -423,7 +444,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Total_Price");
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserCarts)
+            entity.HasOne(d => d.Client).WithMany(p => p.UserCarts)
                 .HasForeignKey(d => d.ClientId)
                 .HasConstraintName("FK__User_Cart__Clien__625A9A57");
         });
