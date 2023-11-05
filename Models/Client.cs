@@ -18,5 +18,4 @@ public partial class Client
 
     public virtual User? User { get; set; }
 
-    public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 }

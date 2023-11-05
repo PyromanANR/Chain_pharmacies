@@ -30,5 +30,7 @@ public partial class User
 
     public virtual ICollection<MainAdmin> MainAdmins { get; set; } = new List<MainAdmin>();
 
+    public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
+
     public virtual UserRole? Role { get; set; }
 }

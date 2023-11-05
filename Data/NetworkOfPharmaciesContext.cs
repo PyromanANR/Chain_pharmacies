@@ -433,9 +433,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Total_Price");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.UserCarts)
+            entity.HasOne(d => d.User).WithMany(p => p.UserCarts)
                 .HasForeignKey(d => d.ClientId)
-                .HasConstraintName("FK__User_Cart__Clien__52593CB8");
+                .HasConstraintName("FK__User_Cart__Clien__625A9A57");
         });
 
         modelBuilder.Entity<UserRole>(entity =>

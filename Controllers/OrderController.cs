@@ -15,10 +15,31 @@ namespace Chain_pharmacies.Controllers
             _context = context;
         }
 
+        public class CartItemViewModel
+        {
+            public int ProductId { get; set; }
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+            public string ImagePath { get; set; }
+            public int Quantity { get; set; }
+
+            public ProductPriceDiscount ProductPriceDiscount { get; set; }
+
+            public ProductQuantityInPack ProductQuantityInPack { get; set; }
+        }
+
+
         public ActionResult Index()
         {
             // Get the current user's ID from the session
-            var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
+            var userJson = HttpContext.Session.GetString("User");
+            if (userJson == null)
+            {
+                TempData["Message"] = "You need to log in before buying.";
+                return RedirectToAction("Login", "Users");
+            }
+
+            var user = JsonConvert.DeserializeObject<User>(userJson);
             var clientId = user.Id;
 
             // Get the user's cart
@@ -28,10 +49,22 @@ namespace Chain_pharmacies.Controllers
                 return NotFound();
             }
 
-            // Get the products in the cart
-            var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id).ToList();
 
-            return View(productsInCart);
+            var cartItems = _context.ProductInCarts
+       .Where(pic => pic.CartId == userCart.Id)
+       .Select(pic => new CartItemViewModel
+       {
+           ProductId = pic.Product.Id,
+           Name = pic.Product.Name,
+           Price = pic.Product.ProductPriceDiscount.Price,
+           ImagePath = pic.Product.ProductImages.First().ImagePath,
+           Quantity = pic.Quantity,
+           ProductPriceDiscount = pic.Product.ProductPriceDiscount,
+           ProductQuantityInPack = pic.Product.ProductQuantityInPack
+       })
+       .ToList();
+
+            return View(cartItems);
         }
 
 
@@ -70,17 +103,30 @@ namespace Chain_pharmacies.Controllers
             }
 
             // Add the product to the cart
-            var productInCart = new ProductInCart
+            var productInCart = _context.ProductInCarts
+     .FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == product.Id);
+
+            if (productInCart == null)
             {
-                CartId = userCart.Id,
-                ProductId = product.Id,
-                Quantity = 1
-            };
-            _context.ProductInCarts.Add(productInCart);
+                // Add the product to the cart
+                productInCart = new ProductInCart
+                {
+                    CartId = userCart.Id,
+                    ProductId = product.Id,
+                    Quantity = 1
+                };
+                _context.ProductInCarts.Add(productInCart);
+            }
+            else
+            {
+                TempData["Message"] = "Цей продукт вже є в корзині!";
+                return RedirectToAction("Index", "Catalog");
+            }
+
             _context.SaveChanges();
 
             // Redirect to the shopping cart view
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Order");
         }
 
         [HttpPost]
@@ -90,8 +136,9 @@ namespace Chain_pharmacies.Controllers
             var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             var clientId = user.Id;
 
+            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
             // Find the product in the cart
-            var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == clientId && pic.ProductId == id);
+            var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == id);
             if (productInCart == null)
             {
                 return NotFound();
