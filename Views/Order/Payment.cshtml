@@ -1,0 +1,22 @@
+﻿@model Chain_pharmacies.Controllers.OrderController.PaymentViewModel
+
+<div class="container">
+    <h2>Payment Details</h2>
+    <p>Total Sum: @Model.TotalSum</p>
+    <form method="post">
+        <div class="form-group">
+            <label for="CreditCardNumber">Credit Card Number:</label>
+            <input type="text" class="form-control" id="CreditCardNumber" name="CreditCardNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="CVCode">CV Code:</label>
+            <input type="text" class="form-control" id="CVCode" name="CVCode" required>
+        </div>
+        <div class="form-group">
+            <label for="DeliveryAddress">Delivery Address:</label>
+            <textarea class="form-control" id="DeliveryAddress" name="DeliveryAddress" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Payment</button>
+    </form>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+</div>

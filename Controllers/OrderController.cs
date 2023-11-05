@@ -5,14 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace Chain_pharmacies.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly NetworkOfPharmaciesContext _context; // replace with your actual DbContext
+        private readonly NetworkOfPharmaciesContext _context; 
 
-        public OrderController(NetworkOfPharmaciesContext context) // replace with your actual DbContext
+        public OrderController(NetworkOfPharmaciesContext context) 
         {
             _context = context;
         }
@@ -224,7 +225,7 @@ namespace Chain_pharmacies.Controllers
             return RedirectToAction("Index");
         }
 
-        // Ваш контроллер
+       
         [HttpPost]
         public ActionResult RemoveFromCart(int id)
         {
@@ -247,6 +248,43 @@ namespace Chain_pharmacies.Controllers
           
             return RedirectToAction("Index");
         }
+
+        public class PaymentViewModel
+        {
+            [Required]
+            public string CreditCardNumber { get; set; }
+
+            [Required]
+            public string CVCode { get; set; }
+
+            [Required]
+            public string DeliveryAddress { get; set; }
+
+            public decimal TotalSum { get; set; }
+        }
+
+
+        [HttpGet]
+        public ActionResult Payment(decimal? totalSum)
+        {
+            var paymentViewModel = new PaymentViewModel
+            {
+                TotalSum = totalSum ?? 0
+            };
+
+            if (ModelState.IsValid)
+            {
+                return View(paymentViewModel);
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "There was a problem with your submission. Please correct the errors and try again.";
+                return View(paymentViewModel);
+            }
+        }
+
+
+
 
 
     }
