@@ -47,6 +47,8 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     public virtual DbSet<ProductInCart> ProductInCarts { get; set; }
 
+    public virtual DbSet<ProductInOrder> ProductInOrders { get; set; }
+
     public virtual DbSet<ProductInMainStorage> ProductInMainStorages { get; set; }
 
     public virtual DbSet<ProductInStorage> ProductInStorages { get; set; }
@@ -167,22 +169,10 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasConstraintName("FK_Orders_Order_Cart");
         });
 
-        modelBuilder.Entity<OrderCart>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Order_Ca__3214EC074D37A0B0");
+        modelBuilder.Entity<ProductInOrder>()
+        .HasKey(p => new { p.CartId, p.ProductId });
 
-            entity.ToTable("Order_Cart");
 
-            entity.Property(e => e.ClientId).HasColumnName("Client_id");
-            entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.TotalPrice)
-                .HasColumnType("decimal(10, 2)")
-                .HasColumnName("Total_Price");
-
-            entity.HasOne(d => d.User).WithMany(p => p.OrderCart)
-                .HasForeignKey(d => d.ClientId)
-                .HasConstraintName("FK__Order_Car__Clien__681373AD");
-        });
 
         modelBuilder.Entity<OrderRequest>(entity =>
         {

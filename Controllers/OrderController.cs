@@ -283,6 +283,53 @@ namespace Chain_pharmacies.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult Payment(PaymentViewModel paymentModel)
+        {
+            var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
+            var clientId = user.Id;
+
+            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+
+            // Copy data from UserCart to OrderCart
+            var orderCart = new OrderCart
+            {
+                Id = userCart.Id,
+                ClientId = userCart.ClientId,
+                Date = userCart.Date,
+                TotalPrice = userCart.TotalPrice,
+                User = userCart.User,
+                Orders = new List<Order>()
+            };
+
+            _context.OrderCarts.Add(orderCart);
+
+            // Copy data from ProductInCart to ProductInOrder
+            var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id);
+            foreach (var productInCart in productsInCart)
+            {
+                var productInOrder = new ProductInOrder
+                {
+                    CartId = productInCart.CartId,
+                    ProductId = productInCart.ProductId,
+                    Quantity = productInCart.Quantity,
+                    Product = productInCart.Product
+                };
+
+                _context.ProductInOrders.Add(productInOrder);
+            }
+
+            // Delete data from UserCart and ProductInCart
+            _context.ProductInCarts.RemoveRange(productsInCart);
+            _context.UserCarts.Remove(userCart);
+
+            _context.SaveChanges();
+
+
+            TempData["Success"] = "Payment successfully!";
+            return RedirectToAction("Index", "Home");
+        }
+
 
 
 

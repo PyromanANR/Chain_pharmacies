@@ -4,6 +4,7 @@ using Chain_pharmacies.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chain_pharmacies.Migrations
 {
     [DbContext(typeof(NetworkOfPharmaciesContext))]
-    partial class NetworkOfPharmaciesContextModelSnapshot : ModelSnapshot
+    [Migration("20231105034334_InitialCreate1233")]
+    partial class InitialCreate1233
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,24 +206,27 @@ namespace Chain_pharmacies.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("ClientId")
+                        .HasColumnType("int")
+                        .HasColumnName("Client_id");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("Total_Price");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK__Order_Ca__3214EC074D37A0B0");
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ClientId1");
 
-                    b.ToTable("OrderCarts");
+                    b.ToTable("Order_Cart", (string)null);
                 });
 
             modelBuilder.Entity("Chain_pharmacies.Models.OrderRequest", b =>
@@ -712,13 +718,14 @@ namespace Chain_pharmacies.Migrations
 
             modelBuilder.Entity("Chain_pharmacies.Models.OrderCart", b =>
                 {
-                    b.HasOne("Chain_pharmacies.Models.Client", null)
-                        .WithMany("OrderCarts")
-                        .HasForeignKey("ClientId");
-
                     b.HasOne("Chain_pharmacies.Models.User", "User")
                         .WithMany("OrderCart")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ClientId")
+                        .HasConstraintName("FK__Order_Car__Clien__681373AD");
+
+                    b.HasOne("Chain_pharmacies.Models.Client", null)
+                        .WithMany("OrderCarts")
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("User");
                 });
