@@ -49,10 +49,14 @@ namespace Chain_pharmacies.Controllers
             var user = JsonConvert.DeserializeObject<User>(userJson);           
             var clientId = user.Id;
 
-       
+
 
             // Get the user's cart
-            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+            var userCart = _context.UserCarts
+    .Where(uc => uc.ClientId == clientId)
+    .OrderByDescending(uc => uc.Id)
+    .FirstOrDefault();
+
             if (userCart == null)
             {
                 return NotFound();
@@ -92,7 +96,11 @@ namespace Chain_pharmacies.Controllers
 
 
             // Get the user's cart
-            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+            var userCart = _context.UserCarts
+     .Where(uc => uc.ClientId == clientId)
+     .OrderByDescending(uc => uc.Id)
+     .FirstOrDefault();
+
             if (userCart == null)
             {
                 return NotFound();
@@ -126,7 +134,11 @@ namespace Chain_pharmacies.Controllers
             var client = _context.Clients.FirstOrDefault(c => c.UserId == user.Id);
 
             // Find the user's cart, or create a new one if it doesn't exist
-            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+            var userCart = _context.UserCarts
+     .Where(uc => uc.ClientId == clientId)
+     .OrderByDescending(uc => uc.Id)
+     .FirstOrDefault();
+
             if (userCart == null)
             {
                 userCart = new UserCart
@@ -201,7 +213,11 @@ namespace Chain_pharmacies.Controllers
             var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             var clientId = user.Id;
 
-            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+            var userCart = _context.UserCarts
+    .Where(uc => uc.ClientId == clientId)
+    .OrderByDescending(uc => uc.Id)
+    .FirstOrDefault();
+
 
             // Find the product in the cart
             var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == id);
@@ -233,8 +249,12 @@ namespace Chain_pharmacies.Controllers
             var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             var clientId = user.Id;
 
-            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
-          
+            var userCart = _context.UserCarts
+     .Where(uc => uc.ClientId == clientId)
+     .OrderByDescending(uc => uc.Id)
+     .FirstOrDefault();
+
+
             var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == id);
             if (productInCart == null)
             {
@@ -289,23 +309,15 @@ namespace Chain_pharmacies.Controllers
             var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             var clientId = user.Id;
 
-            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+            var userCart = _context.UserCarts
+     .Where(uc => uc.ClientId == clientId)
+     .OrderByDescending(uc => uc.Id)
+     .FirstOrDefault();
 
-            // Copy data from UserCart to OrderCart
-            var orderCart = new OrderCart
-            {
-                Id = userCart.Id,
-                OrderClientId = userCart.ClientId,
-                Date = userCart.Date,
-                TotalPrice = userCart.TotalPrice,
-                OrderClient = userCart.Client,
-                Orders = new List<Order>()
-            };
-
-            _context.OrderCarts.Add(orderCart);
+            if (userCart == null) { TempData["Success"] = "Empty cart!"; return RedirectToAction("Index", "Home"); }
 
             // Copy data from ProductInCart to ProductInOrder
-            var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id);
+            var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id).ToList();
             foreach (var productInCart in productsInCart)
             {
                 var productInOrder = new ProductInOrder
@@ -317,14 +329,36 @@ namespace Chain_pharmacies.Controllers
                 };
 
                 _context.ProductInOrders.Add(productInOrder);
+
+                // Decrease quantity from storage
+                var productInMainStorage = _context.ProductInMainStorages.FirstOrDefault(p => p.ProductId == productInCart.ProductId);
+                if (productInMainStorage != null)
+                {
+                    productInMainStorage.Quantity -= productInCart.Quantity;
+                }
+
+                // Add information about payment
+                var salesMainStorage = new SalesMainStorage
+                {
+                    ProductId = productInCart.ProductId,
+                    NetworkId = 1, // Assuming the NetworkId is available in the User object
+                    Quantity = productInCart.Quantity,
+                    SaleDate = DateTime.Now
+                };
+
+                _context.SalesMainStorages.Add(salesMainStorage);
             }
 
             // Delete data from UserCart and ProductInCart
+            userCart = new UserCart
+            {
+                ClientId = clientId,
+                Date = DateTime.Now,
+                TotalPrice = 0
+            };
+            _context.UserCarts.Add(userCart);
             _context.ProductInCarts.RemoveRange(productsInCart);
-            _context.UserCarts.Remove(userCart);
-
             _context.SaveChanges();
-
 
             TempData["Success"] = "Payment successfully!";
             return RedirectToAction("Index", "Home");
