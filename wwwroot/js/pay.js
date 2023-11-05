@@ -1,4 +1,4 @@
-﻿function Pay(pharmacy) {
+﻿function Pay(chosenPharmacy) {
     var productId = @Model.Id;
     var currentQuantity = document.getElementById('quantity-1').value;
 
@@ -9,7 +9,7 @@
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            location: pharmacy.Location,
+            location: chosenPharmacy.Location,
             productId: productId,
             quantity: currentQuantity
         })

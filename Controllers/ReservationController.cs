@@ -152,6 +152,9 @@ namespace Chain_pharmacies.Controllers
                 return NotFound();
             }
 
+            var productPriceDiscount = _context.ProductPriceDiscounts.Find(productId);
+            var discountedPrice = productPriceDiscount.GetDiscountedPrice();
+
             // Now you have the pharmacy ID
             int pharmacyId = pharmacy.Id;
 
@@ -165,7 +168,8 @@ namespace Chain_pharmacies.Controllers
             if (productInStorage == null || productInStorage.Quantity < quantity)
             {
                 // Not enough quantity in stock
-                return BadRequest("Not enough quantity in stock");
+                TempData["Message"] = "Нема товару на складі оберіть іншу аптеку";
+                return RedirectToAction("Index", "Catalog");
             }
 
             // Decrease the quantity in the pharmacy storage
@@ -178,7 +182,7 @@ namespace Chain_pharmacies.Controllers
                 PharmacyId = pharmacyId,
                 Quantity = quantity,
                 SaleDate = DateTime.Now,
-                TotalPrice = quantity * productInStorage.Product.ProductPriceDiscount.Price 
+                TotalPrice = quantity * discountedPrice
             };
             _context.SalesPharmacies.Add(salesPharmacy);
 
@@ -194,7 +198,8 @@ namespace Chain_pharmacies.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Order");
+            TempData["Success"] = "Reservation successfully!";
+            return RedirectToAction("Index", "Home");
         }
 
     }

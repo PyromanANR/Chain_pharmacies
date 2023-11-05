@@ -1,145 +1,132 @@
 ﻿@model Chain_pharmacies.Controllers.ReservationController.ProductViewModel
 @using Newtonsoft.Json;
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
-<link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
-<style>
-    #map {
-        height: 500px;
-    }
-</style>
 
-<div class="product-details">
-    <h2>@Model.Name</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@Model.Name</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
+    <style>
+        #map {
+            height: 500px;
+        }
 
-    @if (!string.IsNullOrEmpty(Model.ImagePath))
-    {
-        <div class="product-images">
-            <img src="@Url.Content(Model.ImagePath)" alt="@Model.Name" />
+        .product-details {
+            font-family: Arial, sans-serif;
+            color: #333;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+            .product-details h2 {
+                margin-top: 0;
+            }
+
+            .product-details h3 {
+                margin-bottom: 5px;
+            }
+
+            .product-details p {
+                margin-top: 0;
+            }
+
+        .product-images img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-details">
+        <h2>@Model.Name</h2>
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <div class="product-images">
+                <img src="@Url.Content(Model.ImagePath)" alt="@Model.Name" />
+            </div>
+        }
+        @if (Model.Quantity > 0)
+        {
+            <div class="product-quantity">
+                <h3>Кількість:</h3>
+                <p>@Model.Quantity</p>
+            </div>
+        }
+        <div class="product-input">
+            <input type="number" name="quantity" min="1" value="@Model.Quantity" step=@Model.Quantity.ToString() id="quantity-1" />
+            <label class="container">
+                Do you want to buy individually?
+                <input type="checkbox" name="buyIndividually" value="true" onchange="changeStep(@Model.Id, @Model.Quantity)" />
+            </label>
         </div>
-    }
-
-    @if (Model.Quantity > 0)
-    {
-        <div class="product-quantity">
-            <h3>Кількість:</h3>
-            <p>@Model.Quantity</p>
-        </div>
-    }
-
-    <div class="product-input">
-        <input type="number" name="quantity" min="1" value="@Model.Quantity" step=@Model.Quantity.ToString() id="quantity-1" />
-        <label class="container">
-            Do you want to buy individually?
-            <input type="checkbox" name="buyIndividually" value="true" onchange="changeStep(@Model.Id, @Model.Quantity)" />
-        </label>
+        @if (Model.Price > 0)
+        {
+            <div class="product-price">
+                <h3>Ціна:</h3>
+                <p>@Model.Price</p>
+            </div>
+        }
+        <button id="choosePharmacyButton" onclick="choosePharmacy()">Choose Pharmacy</button>
+        <div id="map"></div>
+        <button id="paymentButton" onclick="goToPayment()">Go to Payment</button>
     </div>
 
-    @if (Model.Price > 0)
-    {
-        <div class="product-price">
-            <h3>Ціна:</h3>
-            <p>@Model.Price</p>
-        </div>
-    }
-
-    <button id="choosePharmacyButton" onclick="choosePharmacy()">Choose Pharmacy</button>
-    <div id="map"></div>
-    <button id="paymentButton" onclick="Pay(chosenPharmacy)">Go to Payment</button>
-
-   
-</div>
-
-<script>
-    function changeStep(productId, packQuantity) {
-        var quantityInput = document.getElementById('quantity-1');
-        if (quantityInput.step == packQuantity.toString()) {
-            quantityInput.step = "1";
-        } else {
-            quantityInput.step = packQuantity.toString();
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
+    <script>
+        function changeStep(productId, packQuantity) {
+            var quantityInput = document.getElementById('quantity-1');
+            if (quantityInput.step == packQuantity.toString()) {
+                quantityInput.step = "1";
+            } else {
+                quantityInput.step = packQuantity.toString();
+            }
         }
-    }
-    var chosenPharmacy;
-    function choosePharmacy() {
-        L.mapquest.key = 'GUBE6KOgB02K5nwAAlKkkvT8QJZZHBim';
-        var pharmacies = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Pharmacies))'); // Assuming Model.Pharmacies is an array of Pharmacy objects
-        var container = L.DomUtil.get('map');
-        if (container != null) {
-            container._leaflet_id = null;
-        }
-        var map = L.mapquest.map('map', {
-            center: [50.4501, 30.5234], // Coordinates for Kyiv
-            layers: L.mapquest.tileLayer('map'),
-            zoom: 12
-        });
+        var currentQuantity = document.getElementById('quantity-1').value;
+        var chosenPharmacy;
+        function choosePharmacy() {
+            L.mapquest.key = 'GUBE6KOgB02K5nwAAlKkkvT8QJZZHBim';
+            var pharmacies = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Pharmacies))'); // Assuming Model.Pharmacies is an array of Pharmacy objects
+            var container = L.DomUtil.get('map');
+            if (container != null) {
+                container._leaflet_id = null;
+            }
+            var map = L.mapquest.map('map', {
+                center: [50.4501, 30.5234], // Coordinates for Kyiv
+                layers: L.mapquest.tileLayer('map'),
+                zoom: 12
+            });
 
-        pharmacies.forEach(function (pharmacy) {
-            var _mapQuestApiKey = "GUBE6KOgB02K5nwAAlKkkvT8QJZZHBim";
-            var requestUrl = `https://www.mapquestapi.com/geocoding/v1/address?key=${_mapQuestApiKey}&location=${pharmacy.Location}`;
-            fetch(requestUrl)
-                .then(response => response.json())
-                .then(data => {
-                    var location = data.results[0].locations[0].latLng;
-                    var marker = L.marker([location.lat, location.lng], {
-                        icon: L.mapquest.icons.marker(),
-                        draggable: false
-                    }).bindPopup(pharmacy.Location).addTo(map);
-                    marker.on('click', function () {
-                        chosenPharmacy = pharmacy;
-                    });
-                })
-
-                .catch(error => console.error('Error:', error));
-        });
-    }
-
-
-
-</script>
-<script src="/js/pay.js"></script>
-
-<style>
-    .product-details {
-        font-family: Arial, sans-serif;
-        color: #333;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-
-        .product-details h2 {
-            margin-top: 0;
+            pharmacies.forEach(function (pharmacy) {
+                var _mapQuestApiKey = "GUBE6KOgB02K5nwAAlKkkvT8QJZZHBim";
+                var requestUrl = `https://www.mapquestapi.com/geocoding/v1/address?key=${_mapQuestApiKey}&location=${pharmacy.Location}`;
+                fetch(requestUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        var location = data.results[0].locations[0].latLng;
+                        var marker = L.marker([location.lat, location.lng], {
+                            icon: L.mapquest.icons.marker(),
+                            draggable: false
+                        }).bindPopup(pharmacy.Location).addTo(map);
+                        marker.on('click', function () {
+                            chosenPharmacy = pharmacy;
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         }
 
-        .product-details h3 {
-            margin-bottom: 5px;
+        function goToPayment() {
+            var location = chosenPharmacy.Location;
+            var productId = @Model.Id; 
+            var quantity = document.getElementById('quantity-1').value;
+
+            var url = '@Url.Action("Payment", "Reservation")' + '?location=' + location + '&productId=' + productId + '&quantity=' + quantity;
+            window.location.href = url;
         }
+    </script>
+</body>
+</html>
 
-        .product-details p {
-            margin-top: 0;
-        }
-
-    .product-images img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .product-input {
-        margin-top: 20px;
-    }
-
-        .product-input input[type="number"] {
-            width: 50px;
-        }
-
-        .product-input label {
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-    .product-price {
-        margin-top: 20px;
-    }
-</style>
