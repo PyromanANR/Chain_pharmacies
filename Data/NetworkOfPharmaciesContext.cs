@@ -164,7 +164,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
             entity.HasOne(d => d.Cart).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CartId)
-                .HasConstraintName("FK__Orders__Cart_Id__5812160E");
+                .HasConstraintName("FK_Orders_Order_Cart");
         });
 
         modelBuilder.Entity<OrderCart>(entity =>
@@ -179,9 +179,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Total_Price");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.OrderCarts)
+            entity.HasOne(d => d.User).WithMany(p => p.OrderCart)
                 .HasForeignKey(d => d.ClientId)
-                .HasConstraintName("FK__Order_Car__Clien__5535A963");
+                .HasConstraintName("FK__Order_Car__Clien__681373AD");
         });
 
         modelBuilder.Entity<OrderRequest>(entity =>

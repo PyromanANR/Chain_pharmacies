@@ -17,8 +17,8 @@
     }
 
     img {
-        width: 50px;
-        height: 50px;
+        width: 200px;
+        height: 200px;
     }
 
     .container {
@@ -43,6 +43,8 @@
             background-color: #45a049;
         }
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <h2>Your Shopping Cart</h2>
 
@@ -82,6 +84,10 @@
                 <td>@(item.ProductPriceDiscount.GetDiscountedPrice())</td>
                 <td>@totalPrice</td>
                 <td><input type="submit" value="Update" /></td>
+                <td>
+                    <i class="fa fa-trash fa-2x" aria-hidden="true"></i><button class="remove-button" data-product-id="@item.ProductId">Remove</button>
+                </td>
+             
             </tr>
         }
     }
@@ -102,6 +108,14 @@
             quantityInput.step = packQuantity.toString();
         }
     }
+    $(document).ready(function () {
+        $('.remove-button').click(function () {
+            var productId = $(this).data('product-id');
+            $.post('@Url.Action("RemoveFromCart", "Order")', { id: productId }, function () {
+                location.reload();
+            });
+        });
+    });
 </script>
 
 

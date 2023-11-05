@@ -141,7 +141,14 @@ namespace Chain_pharmacies.Controllers
             var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == id);
             if (productInCart == null)
             {
-                return NotFound();
+                return RedirectToAction("Index");
+            }
+
+            // Check the quantity in the main storage
+            var productInMainStorage = _context.ProductInMainStorages.FirstOrDefault(p => p.ProductId == id);
+            if (productInMainStorage == null || productInMainStorage.Quantity < quantity)
+            {
+                return BadRequest("Error: Quantity is greater than the quantity in the main storage.");
             }
 
             // Update the quantity
@@ -152,18 +159,30 @@ namespace Chain_pharmacies.Controllers
             return RedirectToAction("Index");
         }
 
-
-        public ActionResult Reserve(int id)
+        // Ваш контроллер
+        [HttpPost]
+        public ActionResult RemoveFromCart(int id)
         {
-            var product = _context.Products.Find(id);
-            if (product == null)
+           
+            var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
+            var clientId = user.Id;
+
+            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+          
+            var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == id);
+            if (productInCart == null)
             {
                 return NotFound();
             }
 
-           
+         
+            _context.ProductInCarts.Remove(productInCart);
+            _context.SaveChanges();
 
-            return View(product);
+          
+            return RedirectToAction("Index");
         }
+
+
     }
 }
