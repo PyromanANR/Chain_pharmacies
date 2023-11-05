@@ -295,10 +295,10 @@ namespace Chain_pharmacies.Controllers
             var orderCart = new OrderCart
             {
                 Id = userCart.Id,
-                ClientId = userCart.ClientId,
+                OrderClientId = userCart.ClientId,
                 Date = userCart.Date,
                 TotalPrice = userCart.TotalPrice,
-                Client = userCart.Client,
+                OrderClient = userCart.Client,
                 Orders = new List<Order>()
             };
 
@@ -311,9 +311,9 @@ namespace Chain_pharmacies.Controllers
                 var productInOrder = new ProductInOrder
                 {
                     CartId = productInCart.CartId,
-                    ProductId = productInCart.ProductId,
+                    OrderProductId = productInCart.ProductId,
                     Quantity = productInCart.Quantity,
-                    Product = productInCart.Product
+                    OrderProduct = productInCart.Product
                 };
 
                 _context.ProductInOrders.Add(productInOrder);

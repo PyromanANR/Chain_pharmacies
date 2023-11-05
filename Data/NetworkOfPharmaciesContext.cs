@@ -25,6 +25,7 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     }
 
+
     public virtual DbSet<Admin> Admins { get; set; }
 
     public virtual DbSet<Brand> Brands { get; set; }
@@ -170,19 +171,19 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
         modelBuilder.Entity<OrderCart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Order_Ca__3214EC07F510645C");
+            entity.HasKey(e => e.Id).HasName("PK__Order_Ca__3214EC070BA3639C");
 
             entity.ToTable("Order_Cart");
 
-            entity.Property(e => e.ClientId).HasColumnName("Client_id");
             entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.OrderClientId).HasColumnName("Order_Client_id");
             entity.Property(e => e.TotalPrice)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Total_Price");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.OrderCarts)
-                .HasForeignKey(d => d.ClientId)
-                .HasConstraintName("FK__Order_Car__Clien__681373AD");
+            entity.HasOne(d => d.OrderClient).WithMany(p => p.OrderCarts)
+                .HasForeignKey(d => d.OrderClientId)
+                .HasConstraintName("FK__Order_Car__Order__76619304");
         });
 
         modelBuilder.Entity<OrderRequest>(entity =>
@@ -301,17 +302,17 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
         modelBuilder.Entity<ProductInOrder>(entity =>
         {
-            entity.HasKey(e => new { e.CartId, e.ProductId }).HasName("PK__ProductI__6F2808E24AF04F53");
+            entity.HasKey(e => new { e.CartId, e.OrderProductId }).HasName("PK__ProductI__F0F0AE599611080C");
 
             entity.ToTable("ProductInOrder");
 
             entity.Property(e => e.CartId).HasColumnName("Cart_Id");
-            entity.Property(e => e.ProductId).HasColumnName("Product_Id");
+            entity.Property(e => e.OrderProductId).HasColumnName("Order_Product_Id");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductInOrders)
-                .HasForeignKey(d => d.ProductId)
+            entity.HasOne(d => d.OrderProduct).WithMany(p => p.ProductInOrders)
+                .HasForeignKey(d => d.OrderProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ProductIn__Produ__6BE40491");
+                .HasConstraintName("FK__ProductIn__Order__7A3223E8");
         });
 
         modelBuilder.Entity<ProductInStorage>(entity =>
