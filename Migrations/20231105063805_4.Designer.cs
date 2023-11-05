@@ -4,6 +4,7 @@ using Chain_pharmacies.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chain_pharmacies.Migrations
 {
     [DbContext(typeof(NetworkOfPharmaciesContext))]
-    partial class NetworkOfPharmaciesContextModelSnapshot : ModelSnapshot
+    [Migration("20231105063805_4")]
+    partial class _4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -480,9 +483,6 @@ namespace Chain_pharmacies.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("Sale_Date");
 
-                    b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id")
                         .HasName("PK__Sales_Ma__3214EC0772CEB531");
 
@@ -515,9 +515,6 @@ namespace Chain_pharmacies.Migrations
                     b.Property<DateTime>("SaleDate")
                         .HasColumnType("datetime")
                         .HasColumnName("Sale_Date");
-
-                    b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id")
                         .HasName("PK__Sales_Ph__3214EC07C6CC6B42");

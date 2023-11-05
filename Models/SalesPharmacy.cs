@@ -14,6 +14,7 @@ public partial class SalesPharmacy
     public int Quantity { get; set; }
 
     public DateTime SaleDate { get; set; }
+    public decimal? TotalPrice { get; set; }
 
     public virtual Pharmacy? Pharmacy { get; set; }
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Chain_pharmacies.Migrations
 {
     /// <inheritdoc />
-    public partial class _4441 : Migration
+    public partial class _4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,22 @@ namespace Chain_pharmacies.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__Brand__3214EC07FE0CC15D", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Cart_Id = table.Column<int>(type: "int", nullable: true),
+                    Total_Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Delivery_Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__Orders__3214EC072A3C8D91", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -286,26 +302,6 @@ namespace Chain_pharmacies.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order_Cart",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Order_Client_id = table.Column<int>(type: "int", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Total_Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Order_Ca__3214EC070BA3639C", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK__Order_Car__Order__76619304",
-                        column: x => x.Order_Client_id,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "NetworkOfPharmacies",
                 columns: table => new
                 {
@@ -393,27 +389,6 @@ namespace Chain_pharmacies.Migrations
                         name: "FK__Sales_Pha__Produ__68487DD7",
                         column: x => x.Product_Id,
                         principalTable: "Product",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Cart_Id = table.Column<int>(type: "int", nullable: true),
-                    Total_Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Delivery_Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Orders__3214EC072A3C8D91", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Order_Cart",
-                        column: x => x.Cart_Id,
-                        principalTable: "Order_Cart",
                         principalColumn: "Id");
                 });
 
@@ -534,11 +509,6 @@ namespace Chain_pharmacies.Migrations
                 column: "MainAdminId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_Cart_Order_Client_id",
-                table: "Order_Cart",
-                column: "Order_Client_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OrderRequests_Pharmacy_Id",
                 table: "OrderRequests",
                 column: "Pharmacy_Id");
@@ -547,11 +517,6 @@ namespace Chain_pharmacies.Migrations
                 name: "IX_OrderRequests_Product_Id",
                 table: "OrderRequests",
                 column: "Product_Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_Cart_Id",
-                table: "Orders",
-                column: "Cart_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pharmacy_AdminId",
@@ -633,6 +598,9 @@ namespace Chain_pharmacies.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Client");
+
+            migrationBuilder.DropTable(
                 name: "OrderRequests");
 
             migrationBuilder.DropTable(
@@ -669,9 +637,6 @@ namespace Chain_pharmacies.Migrations
                 name: "User_Cart");
 
             migrationBuilder.DropTable(
-                name: "Order_Cart");
-
-            migrationBuilder.DropTable(
                 name: "MainStorage");
 
             migrationBuilder.DropTable(
@@ -679,9 +644,6 @@ namespace Chain_pharmacies.Migrations
 
             migrationBuilder.DropTable(
                 name: "Product");
-
-            migrationBuilder.DropTable(
-                name: "Client");
 
             migrationBuilder.DropTable(
                 name: "NetworkOfPharmacies");

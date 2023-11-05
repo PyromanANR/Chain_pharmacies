@@ -15,6 +15,8 @@ public partial class SalesMainStorage
 
     public DateTime SaleDate { get; set; }
 
+    public decimal? TotalPrice { get; set; }
+
     public virtual NetworkOfPharmacy? Network { get; set; }
 
     public virtual Product? Product { get; set; }

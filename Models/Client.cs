@@ -14,8 +14,6 @@ public partial class Client
 
     public string? Receipts { get; set; }
 
-    public virtual ICollection<OrderCart> OrderCarts { get; set; } = new List<OrderCart>();
-
     public virtual User? User { get; set; }
 
 }

@@ -310,11 +310,20 @@ namespace Chain_pharmacies.Controllers
             var clientId = user.Id;
 
             var userCart = _context.UserCarts
-     .Where(uc => uc.ClientId == clientId)
-     .OrderByDescending(uc => uc.Id)
-     .FirstOrDefault();
+        .Where(uc => uc.ClientId == clientId)
+        .OrderByDescending(uc => uc.Id)
+        .FirstOrDefault();
 
             if (userCart == null) { TempData["Success"] = "Empty cart!"; return RedirectToAction("Index", "Home"); }
+
+            // Create a new order
+            var order = new Order
+            {
+                Date = DateTime.Now,
+                CartId = userCart.Id,
+                DeliveryAddress = paymentModel.DeliveryAddress, // Assuming the address is available in the User object
+                TotalPrice = paymentModel.TotalSum
+            };
 
             // Copy data from ProductInCart to ProductInOrder
             var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id).ToList();
@@ -343,11 +352,14 @@ namespace Chain_pharmacies.Controllers
                     ProductId = productInCart.ProductId,
                     NetworkId = 1, // Assuming the NetworkId is available in the User object
                     Quantity = productInCart.Quantity,
-                    SaleDate = DateTime.Now
+                    SaleDate = DateTime.Now,
+                    TotalPrice = paymentModel.TotalSum // Assuming the price is available in the Product object
                 };
 
                 _context.SalesMainStorages.Add(salesMainStorage);
             }
+
+            _context.Orders.Add(order);
 
             // Delete data from UserCart and ProductInCart
             userCart = new UserCart

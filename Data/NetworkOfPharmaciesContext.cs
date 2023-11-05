@@ -40,8 +40,6 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<OrderCart> OrderCarts { get; set; }
-
     public virtual DbSet<OrderRequest> OrderRequests { get; set; }
 
     public virtual DbSet<Pharmacy> Pharmacies { get; set; }
@@ -163,28 +161,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
             entity.Property(e => e.TotalPrice)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Total_Price");
-
-            entity.HasOne(d => d.Cart).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.CartId)
-                .HasConstraintName("FK_Orders_Order_Cart");
         });
 
-        modelBuilder.Entity<OrderCart>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Order_Ca__3214EC070BA3639C");
-
-            entity.ToTable("Order_Cart");
-
-            entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.OrderClientId).HasColumnName("Order_Client_id");
-            entity.Property(e => e.TotalPrice)
-                .HasColumnType("decimal(10, 2)")
-                .HasColumnName("Total_Price");
-
-            entity.HasOne(d => d.OrderClient).WithMany(p => p.OrderCarts)
-                .HasForeignKey(d => d.OrderClientId)
-                .HasConstraintName("FK__Order_Car__Order__76619304");
-        });
+      
 
         modelBuilder.Entity<OrderRequest>(entity =>
         {
@@ -380,6 +359,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
             entity.Property(e => e.SaleDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Sale_Date");
+            entity.Property(e => e.TotalPrice)
+               .HasColumnType("decimal(10, 2)")
+               .HasColumnName("Total_Price");
 
             entity.HasOne(d => d.Network).WithMany(p => p.SalesMainStorages)
                 .HasForeignKey(d => d.NetworkId)
@@ -401,6 +383,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
             entity.Property(e => e.SaleDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Sale_Date");
+            entity.Property(e => e.TotalPrice)
+               .HasColumnType("decimal(10, 2)")
+               .HasColumnName("Total_Price");
 
             entity.HasOne(d => d.Pharmacy).WithMany(p => p.SalesPharmacies)
                 .HasForeignKey(d => d.PharmacyId)

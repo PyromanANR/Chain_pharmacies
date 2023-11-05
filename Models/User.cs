@@ -32,7 +32,5 @@ public partial class User
 
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 
-    public virtual ICollection<OrderCart> OrderCarts { get; set; } = new List<OrderCart>();
-
     public virtual UserRole? Role { get; set; }
 }

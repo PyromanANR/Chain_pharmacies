@@ -15,5 +15,4 @@ public partial class Order
 
     public string? DeliveryAddress { get; set; }
 
-    public virtual OrderCart? Cart { get; set; }
 }
