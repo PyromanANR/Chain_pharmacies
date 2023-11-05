@@ -121,6 +121,10 @@
             });
         });
     });
+    $(document).ready(function () {
+        $.post('@Url.Action("Index", "Order")', { totalSum: '@totalSum' }, function (data) {
+        });
+    });
 </script>
 
 

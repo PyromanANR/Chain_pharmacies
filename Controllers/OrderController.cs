@@ -75,6 +75,33 @@ namespace Chain_pharmacies.Controllers
             return View(cartItems);
         }
 
+        [HttpPost]
+        public ActionResult Index(decimal totalSum)
+        {
+            var userJson = HttpContext.Session.GetString("User");
+            if (userJson == null)
+            {
+                TempData["Message"] = "You need to log in before buying.";
+                return RedirectToAction("Login", "Users");
+            }
+
+            var user = JsonConvert.DeserializeObject<User>(userJson);
+            var clientId = user.Id;
+
+
+
+            // Get the user's cart
+            var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+            if (userCart == null)
+            {
+                return NotFound();
+            }
+
+            userCart.TotalPrice = totalSum;
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Order");
+        }
+
 
         [HttpGet]
         public ActionResult Buy(int id)
@@ -174,6 +201,7 @@ namespace Chain_pharmacies.Controllers
             var clientId = user.Id;
 
             var userCart = _context.UserCarts.FirstOrDefault(uc => uc.ClientId == clientId);
+
             // Find the product in the cart
             var productInCart = _context.ProductInCarts.FirstOrDefault(pic => pic.CartId == userCart.Id && pic.ProductId == id);
             if (productInCart == null)
