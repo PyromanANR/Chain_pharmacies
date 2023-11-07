@@ -1,0 +1,14 @@
+﻿@model Chain_pharmacies.Controllers.ProfileAdminController.AdminUserViewModel
+
+<partial name="Notification" />
+<div class="container">
+    <h2>Admin Information</h2>
+    <p>Name: @Model.User.Name</p>
+    <p>Email: @Model.User.Email</p>
+    <p>Work Address: @Model.Admin.WorkAddress</p>
+
+    <div class="mt-3">
+        <a asp-controller="ProfileAdmin" asp-action="CreateLog" class="btn btn-primary">Create Log by Pharmacy</a>
+        <a asp-controller="ProfileAdmin" asp-action="Viewitems" class="btn btn-secondary ml-2">View Storage</a>
+    </div>
+</div>

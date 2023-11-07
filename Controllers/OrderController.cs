@@ -316,61 +316,65 @@ namespace Chain_pharmacies.Controllers
 
             if (userCart == null) { TempData["Success"] = "Empty cart!"; return RedirectToAction("Index", "Home"); }
 
-            // Create a new order
-            var order = new Order
+            try
             {
-                Date = DateTime.Now,
-                CartId = userCart.Id,
-                DeliveryAddress = paymentModel.DeliveryAddress, // Assuming the address is available in the User object
-                TotalPrice = paymentModel.TotalSum
-            };
-
-            // Copy data from ProductInCart to ProductInOrder
-            var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id).ToList();
-            foreach (var productInCart in productsInCart)
-            {
-                var productInOrder = new ProductInOrder
+                // Create a new order
+                var order = new Order
                 {
-                    CartId = productInCart.CartId,
-                    OrderProductId = productInCart.ProductId,
-                    Quantity = productInCart.Quantity,
-                    OrderProduct = productInCart.Product
+                    Date = DateTime.Now,
+                    CartId = userCart.Id,
+                    DeliveryAddress = paymentModel.DeliveryAddress, // Assuming the address is available in the User object
+                    TotalPrice = paymentModel.TotalSum
                 };
 
-                _context.ProductInOrders.Add(productInOrder);
-
-                // Decrease quantity from storage
-                var productInMainStorage = _context.ProductInMainStorages.FirstOrDefault(p => p.ProductId == productInCart.ProductId);
-                if (productInMainStorage != null)
+                // Copy data from ProductInCart to ProductInOrder
+                var productsInCart = _context.ProductInCarts.Where(pic => pic.CartId == userCart.Id).ToList();
+                foreach (var productInCart in productsInCart)
                 {
-                    productInMainStorage.Quantity -= productInCart.Quantity;
+                    var productInOrder = new ProductInOrder
+                    {
+                        CartId = productInCart.CartId,
+                        OrderProductId = productInCart.ProductId,
+                        Quantity = productInCart.Quantity,
+                        OrderProduct = productInCart.Product
+                    };
+
+                    _context.ProductInOrders.Add(productInOrder);
+
+                    // Decrease quantity from storage
+                    var productInMainStorage = _context.ProductInMainStorages.FirstOrDefault(p => p.ProductId == productInCart.ProductId);
+                    if (productInMainStorage != null)
+                    {
+                        productInMainStorage.Quantity -= productInCart.Quantity;
+                    }
+
+                    // Add information about payment
+                    var salesMainStorage = new SalesMainStorage
+                    {
+                        ProductId = productInCart.ProductId,
+                        NetworkId = 1, // Assuming the NetworkId is available in the User object
+                        Quantity = productInCart.Quantity,
+                        SaleDate = DateTime.Now,
+                        TotalPrice = paymentModel.TotalSum // Assuming the price is available in the Product object
+                    };
+
+                    _context.SalesMainStorages.Add(salesMainStorage);
                 }
 
-                // Add information about payment
-                var salesMainStorage = new SalesMainStorage
+                _context.Orders.Add(order);
+
+                // Delete data from UserCart and ProductInCart
+                userCart = new UserCart
                 {
-                    ProductId = productInCart.ProductId,
-                    NetworkId = 1, // Assuming the NetworkId is available in the User object
-                    Quantity = productInCart.Quantity,
-                    SaleDate = DateTime.Now,
-                    TotalPrice = paymentModel.TotalSum // Assuming the price is available in the Product object
+                    ClientId = clientId,
+                    Date = DateTime.Now,
+                    TotalPrice = 0
                 };
-
-                _context.SalesMainStorages.Add(salesMainStorage);
+                _context.UserCarts.Add(userCart);
+                _context.ProductInCarts.RemoveRange(productsInCart);
+                _context.SaveChanges();
             }
-
-            _context.Orders.Add(order);
-
-            // Delete data from UserCart and ProductInCart
-            userCart = new UserCart
-            {
-                ClientId = clientId,
-                Date = DateTime.Now,
-                TotalPrice = 0
-            };
-            _context.UserCarts.Add(userCart);
-            _context.ProductInCarts.RemoveRange(productsInCart);
-            _context.SaveChanges();
+            catch (Exception ex) { return BadRequest("Error: " + ex.ToString()); }
 
             TempData["Success"] = "Payment successfully!";
             return RedirectToAction("Index", "Home");

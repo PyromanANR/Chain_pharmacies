@@ -1,0 +1,25 @@
+﻿@model List<Chain_pharmacies.Controllers.ProfileAdminController.ProductInStorageViewModel>
+
+<h2>Storage Items</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>
+                    <a asp-controller="ProfileAdmin" asp-action="Create" asp-route-productId="@item.ProductId" class="btn btn-primary">Create Order to Main Storage</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

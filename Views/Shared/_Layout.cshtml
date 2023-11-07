@@ -65,7 +65,22 @@
                         var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User"));
                         <div class="d-flex align-items-center">
                             <span style="margin-right: 10px;">@user.Name</span>
-                            <a asp-controller="Profile" asp-action="Index">
+                            @{
+                                string controller = "";
+                                switch (user.RoleId)
+                                {
+                                    case 1:
+                                        controller = "Profile";
+                                        break;
+                                    case 2:
+                                        controller = "ProfileAdmin";
+                                        break;
+                                    case 3:
+                                        controller = "ProfileMainAdmin";
+                                        break;
+                                }
+                            }
+                            <a asp-controller="@controller" asp-action="Index">
                                 <i class="fa fa-user-circle-o fa-3x" aria-hidden="true"></i>
                             </a>
                             <div class="dropdown">
