@@ -1,0 +1,35 @@
+﻿@model List<dynamic>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales by Product</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="salesChart"></canvas>
+    <script>
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Select(m => m.ProductName))),
+                datasets: [{
+                    label: 'Sales Count',
+                    data: @Html.Raw(Json.Serialize(Model.Select(m => m.SalesCount))),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

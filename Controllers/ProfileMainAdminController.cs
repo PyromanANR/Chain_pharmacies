@@ -105,28 +105,52 @@ namespace Chain_pharmacies.Controllers
             return View(new { ChartData = chartDataJson, ProfitData = profitDataJson });
         }
 
-
-
-
-
-
-
         public IActionResult ViewOrderRequests()
         {
             return View();
             // Ваш код для перегляду запитів на замовлення
         }
 
-        public IActionResult ViewItemsOnMainStorage()
+        public async Task<IActionResult> ViewItemsOnMainStorage()
         {
-            return View();
-            // Ваш код для перегляду товарів на основному складі
+            // Get product data from the database
+            var productData = await _context.ProductInMainStorages
+                .Include(p => p.Product)
+                .Include(p => p.Storage)
+                .ToListAsync();
+
+            return View(productData);
         }
 
-        public IActionResult CreateLogBySalesForMainStorage()
+        public async Task<IActionResult> CreateLogBySalesForMainStorage()
         {
-            return View();
-            // Ваш код для створення журналу продажів для основного складу
+            // Get sales data from the database
+            var salesData = await _context.SalesMainStorages
+                .GroupBy(s => s.ProductId)
+                .Select(g => new { ProductId = g.Key, SalesCount = g.Sum(s => s.Quantity) })
+                .ToListAsync();
+
+            // Get product data from the database
+            var productData = await _context.Products.ToListAsync();
+
+            // Prepare data for the chart
+            var chartData = new List<dynamic>();
+
+            foreach (var data in salesData)
+            {
+                var product = productData.FirstOrDefault(p => p.Id == data.ProductId);
+                if (product != null)
+                {
+                    chartData.Add(new
+                    {
+                        ProductName = product.Name,
+                        SalesCount = data.SalesCount
+                    });
+                }
+            }
+
+            return View(chartData);
         }
+
     }
 }
