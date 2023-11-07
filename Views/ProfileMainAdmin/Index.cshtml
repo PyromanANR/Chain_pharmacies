@@ -1,0 +1,13 @@
+﻿@model Chain_pharmacies.Controllers.ProfileMainAdminController.MainAdminViewModel
+
+<h2>Main Admin Information</h2>
+<p>Name: @Model.User.Name</p>
+<p>Email: @Model.User.Email</p>
+<p>Work Address: @Model.MainAdmin.WorkAddress</p>
+
+<div class="mt-3">
+    <a asp-controller="ProfileMainAdmin" asp-action="CreateLog" class="btn btn-primary">Create Log by ChainPharmacies</a>
+    <a asp-controller="ProfileMainAdmin" asp-action="ViewOrderRequests" class="btn btn-secondary ml-2">View Order Requests</a>
+    <a asp-controller="ProfileMainAdmin" asp-action="ViewItemsOnMainStorage" class="btn btn-secondary ml-2">View Items on Main Storage</a>
+    <a asp-controller="ProfileMainAdmin" asp-action="CreateLogBySalesForMainStorage" class="btn btn-secondary ml-2">Create Log by Sales for Main Storage</a>
+</div>
