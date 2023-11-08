@@ -7,7 +7,6 @@
         <tr>
             <th>Product Name</th>
             <th>Quantity</th>
-            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -16,10 +15,9 @@
             <tr>
                 <td>@item.ProductName</td>
                 <td>@item.Quantity</td>
-                <td>
-                    <a asp-controller="ProfileAdmin" asp-action="Create" asp-route-productId="@item.ProductId" class="btn btn-primary">Create Order to Main Storage</a>
-                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<a asp-action="Create" asp-controller="ProfileAdmin" class="btn btn-primary">Create Order Request</a>

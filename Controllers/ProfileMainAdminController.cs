@@ -105,11 +105,90 @@ namespace Chain_pharmacies.Controllers
             return View(new { ChartData = chartDataJson, ProfitData = profitDataJson });
         }
 
-        public IActionResult ViewOrderRequests()
+        public async Task<IActionResult> ViewOrderRequests()
         {
-            return View();
-            // Ваш код для перегляду запитів на замовлення
+            // Get order request data from the database
+            var orderRequestData = await _context.OrderRequests
+                .Include(o => o.Product)
+                .Include(o => o.Pharmacy)
+                .ToListAsync();
+
+            return View(orderRequestData);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmRequest(int id)
+        {
+            // Find the order request
+            var orderRequest = await _context.OrderRequests
+                .Include(o => o.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (orderRequest == null)
+            {
+                return NotFound();
+            }
+
+            // Find the product in the main storage
+            var productInMainStorage = await _context.ProductInMainStorages
+                .FirstOrDefaultAsync(p => p.ProductId == orderRequest.ProductId);
+
+            if (productInMainStorage == null)
+            {
+                return NotFound();
+            }
+
+            // Check if there is enough quantity in the main storage
+            if (productInMainStorage.Quantity < orderRequest.Quantity)
+            {
+                TempData["Message"] = "Not enough Quantity Product in MainStorage";
+                RedirectToAction(nameof(Index)); // Bad Gateway
+            }
+
+            try
+            {
+                // Deduct the quantity from the main storage
+                productInMainStorage.Quantity -= orderRequest.Quantity;
+                _context.ProductInMainStorages.Update(productInMainStorage);
+
+                // Add the quantity to the pharmacy storage
+                var productInPharmacyStorage = await _context.ProductInStorages
+                    .FirstOrDefaultAsync(p => p.ProductId == orderRequest.ProductId && p.StorageId == orderRequest.PharmacyId);
+
+                if (productInPharmacyStorage == null)
+                {
+                    // If the product does not exist in the pharmacy storage, create a new entry
+                    productInPharmacyStorage = new ProductInStorage
+                    {
+                        StorageId = orderRequest.PharmacyId.Value,
+                        ProductId = orderRequest.ProductId.Value,
+                        Quantity = orderRequest.Quantity
+                    };
+                    _context.ProductInStorages.Add(productInPharmacyStorage);
+                }
+                else
+                {
+                    // If the product exists in the pharmacy storage, add the quantity
+                    productInPharmacyStorage.Quantity += orderRequest.Quantity;
+                    _context.ProductInStorages.Update(productInPharmacyStorage);
+                }
+
+
+                // Update the status of the order request
+                orderRequest.Status = "Confirmed";
+                _context.OrderRequests.Update(orderRequest);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.ToString();
+                return RedirectToAction(nameof(Index));
+            }
+            TempData["Success"] = "Order Confirmed successful!";
+            return RedirectToAction(nameof(Index));
+        }
+
+
 
         public async Task<IActionResult> ViewItemsOnMainStorage()
         {

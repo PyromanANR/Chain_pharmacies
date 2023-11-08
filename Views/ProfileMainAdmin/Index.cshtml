@@ -1,5 +1,14 @@
 ﻿@model Chain_pharmacies.Controllers.ProfileMainAdminController.MainAdminViewModel
 
+
+<partial name="Notification" />
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["Message"]
+    </div>
+}
 <h2>Main Admin Information</h2>
 <p>Name: @Model.User.Name</p>
 <p>Email: @Model.User.Email</p>

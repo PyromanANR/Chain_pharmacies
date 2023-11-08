@@ -1,14 +1,15 @@
-﻿@model Chain_pharmacies.Models.OrderRequest
+﻿@model Chain_pharmacies.Controllers.ProfileAdminController.OrderRequestViewModel
 
-<h2>Create Order to Main Storage</h2>
+<h2>Create Order Request</h2>
 
 <form asp-action="Create">
-    <input type="hidden" asp-for="ProductId" />
-
+    <div class="form-group">
+        <label for="product">Product</label>
+        <select id="product" name="SelectedProductId" asp-items="@(new SelectList(Model.Products, "Id", "Name"))"></select>
+    </div>
     <div class="form-group">
         <label for="quantity">Quantity</label>
-        <input type="number" id="quantity" asp-for="Quantity" min="1" class="form-control" />
+        <input type="number" id="quantity" name="Quantity" value="@Model.Quantity" min="1" />
     </div>
-
-    <button type="submit" class="btn btn-primary">Create Order</button>
+    <button type="submit">Create Order to Main Storage</button>
 </form>

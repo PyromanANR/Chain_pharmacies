@@ -105,18 +105,20 @@ namespace Chain_pharmacies.Controllers
             return View(items);
         }
 
-        public IActionResult Create(int productId)
+        public class OrderRequestViewModel
         {
-            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+            public int SelectedProductId { get; set; }
+            public int Quantity { get; set; }
+            public List<Product> Products { get; set; }
+        }
 
-            if (product == null)
-            {
-                return NotFound();
-            }
 
-            var model = new OrderRequest
+        public IActionResult Create()
+        {
+            var products = _context.Products.ToList();
+            var model = new OrderRequestViewModel
             {
-                ProductId = productId,
+                Products = products,
                 Quantity = 1  // За замовчуванням встановлюємо кількість на 1
             };
 
@@ -124,7 +126,7 @@ namespace Chain_pharmacies.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(OrderRequest orderRequest)
+        public IActionResult Create(OrderRequestViewModel model)
         {
             var userId = HttpContext.Session.GetString("User");
             var user = JsonConvert.DeserializeObject<User>(userId);
@@ -142,9 +144,14 @@ namespace Chain_pharmacies.Controllers
                 return NotFound();
             }
 
-            orderRequest.PharmacyId = pharmacy.Id;
-            orderRequest.RequestDate = DateTime.Now;
-            orderRequest.Status = "Pending";
+            var orderRequest = new OrderRequest
+            {
+                ProductId = model.SelectedProductId,
+                PharmacyId = pharmacy.Id,
+                Quantity = model.Quantity,
+                RequestDate = DateTime.Now,
+                Status = "Pending"
+            };
 
             _context.OrderRequests.Add(orderRequest);
             _context.SaveChanges();
