@@ -292,14 +292,14 @@ namespace Chain_pharmacies.Controllers
                 TotalSum = totalSum ?? 0
             };
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && totalSum != 0)
             {
                 return View(paymentViewModel);
             }
             else
             {
-                ViewBag.ErrorMessage = "There was a problem with your submission. Please correct the errors and try again.";
-                return View(paymentViewModel);
+                TempData["Message"] = "Для того, щоб перейди до оплати кошик не повинен бути пустий!";
+                return RedirectToAction("Index", "Order");
             }
         }
 
