@@ -81,7 +81,7 @@ namespace Chain_pharmacies.Controllers
                 Name = product.Name,
                 ImagePath = product.ProductImages.FirstOrDefault()?.ImagePath, // Use the first image if exists
                 Quantity = product.ProductQuantityInPack?.Quantity ?? 0, // Use the quantity in the main storage if exists
-                Price = product.ProductPriceDiscount?.Price ?? 0, // Use the price discount if exists
+                Price = product.ProductPriceDiscount?.GetDiscountedPrice() ?? 0, // Use the price discount if exists
                 Pharmacies = pharmacies
             };
 
