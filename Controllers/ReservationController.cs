@@ -112,8 +112,6 @@ namespace Chain_pharmacies.Controllers
             var clientId = user.Id;
             var client = _context.Clients.FirstOrDefault(c => c.UserId == user.Id);
 
-
-            // Assuming you have a List<string> of items
             List<string> items = new List<string> { "Флуоксетин", "Інфлювак", "Амоксіцилін" };
             string productName = product.Name;
             if (items.Contains(productName))

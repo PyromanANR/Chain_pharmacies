@@ -45,7 +45,7 @@ namespace Chain_pharmacies.Controllers
         public async Task<IActionResult> CreateLog()
         {
             var salesData = await _context.SalesPharmacies
-        .GroupBy(s => new { s.PharmacyId, s.ProductId, SaleDate = s.SaleDate.Date }) // Use the Date property of SaleDate
+        .GroupBy(s => new { s.PharmacyId, s.ProductId, SaleDate = s.SaleDate.Date }) 
         .Select(g => new
         {
             g.Key.PharmacyId,
@@ -142,7 +142,7 @@ namespace Chain_pharmacies.Controllers
             if (productInMainStorage.Quantity < orderRequest.Quantity)
             {
                 TempData["Message"] = "Not enough Quantity Product in MainStorage";
-                RedirectToAction(nameof(Index)); // Bad Gateway
+                RedirectToAction(nameof(Index));
             }
 
             try

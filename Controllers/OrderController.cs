@@ -174,7 +174,7 @@ namespace Chain_pharmacies.Controllers
             }
 
 
-            // Assuming you have a List<string> of items
+           
             List<string> items = new List<string> { "Флуоксетин", "Інфлювак", "Амоксіцилін" };
             string productName = productInCart.Product.Name;
             if (items.Contains(productName))
@@ -323,7 +323,7 @@ namespace Chain_pharmacies.Controllers
                 {
                     Date = DateTime.Now,
                     CartId = userCart.Id,
-                    DeliveryAddress = paymentModel.DeliveryAddress, // Assuming the address is available in the User object
+                    DeliveryAddress = paymentModel.DeliveryAddress, 
                     TotalPrice = paymentModel.TotalSum
                 };
 
