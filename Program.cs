@@ -1,4 +1,3 @@
-using Chain_pharmacies.Models;
 using Chain_pharmacies.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;

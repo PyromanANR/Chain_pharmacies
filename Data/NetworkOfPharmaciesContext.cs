@@ -1,30 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using Chain_pharmacies.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging.Console;
-
 
 namespace Chain_pharmacies.Data;
-
 
 public partial class NetworkOfPharmaciesContext : DbContext
 {
     public NetworkOfPharmaciesContext()
     {
-
     }
 
     public NetworkOfPharmaciesContext(DbContextOptions<NetworkOfPharmaciesContext> options)
         : base(options)
     {
-
     }
-
 
     public virtual DbSet<Admin> Admins { get; set; }
 
@@ -66,7 +56,11 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     public virtual DbSet<SalesPharmacy> SalesPharmacies { get; set; }
 
-    public virtual DbSet<Chain_pharmacies.Models.Type> Types { get; set; }
+    public virtual DbSet<Table1> Table1s { get; set; }
+
+    public virtual DbSet<Table2> Table2s { get; set; }
+
+    public virtual DbSet<Models.Type> Types { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -74,8 +68,9 @@ public partial class NetworkOfPharmaciesContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
-
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=NIKITA;Database=NetworkOfPharmacies;Trusted_Connection=True;Encrypt=False;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -162,8 +157,6 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Total_Price");
         });
-
-      
 
         modelBuilder.Entity<OrderRequest>(entity =>
         {
@@ -360,8 +353,8 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("Sale_Date");
             entity.Property(e => e.TotalPrice)
-               .HasColumnType("decimal(10, 2)")
-               .HasColumnName("Total_Price");
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Total_Price");
 
             entity.HasOne(d => d.Network).WithMany(p => p.SalesMainStorages)
                 .HasForeignKey(d => d.NetworkId)
@@ -384,8 +377,8 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("Sale_Date");
             entity.Property(e => e.TotalPrice)
-               .HasColumnType("decimal(10, 2)")
-               .HasColumnName("Total_Price");
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Total_Price");
 
             entity.HasOne(d => d.Pharmacy).WithMany(p => p.SalesPharmacies)
                 .HasForeignKey(d => d.PharmacyId)
@@ -396,7 +389,43 @@ public partial class NetworkOfPharmaciesContext : DbContext
                 .HasConstraintName("FK__Sales_Pha__Produ__68487DD7");
         });
 
-        modelBuilder.Entity<Chain_pharmacies.Models.Type>(entity =>
+        modelBuilder.Entity<Table1>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__table1__3213E83F74CF7512");
+
+            entity.ToTable("table1");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ClientName)
+                .HasMaxLength(255)
+                .HasColumnName("client_name");
+            entity.Property(e => e.DataTimeScript)
+                .HasColumnType("datetime")
+                .HasColumnName("data_time_script");
+            entity.Property(e => e.NamePharmacy)
+                .HasMaxLength(255)
+                .HasColumnName("name_pharmacy");
+        });
+
+        modelBuilder.Entity<Table2>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__table2__3213E83F564DE887");
+
+            entity.ToTable("table2");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ClientName)
+                .HasMaxLength(255)
+                .HasColumnName("client_name");
+            entity.Property(e => e.DataTimeScript)
+                .HasColumnType("datetime")
+                .HasColumnName("data_time_script");
+            entity.Property(e => e.NamePharmacy)
+                .HasMaxLength(255)
+                .HasColumnName("name_pharmacy");
+        });
+
+        modelBuilder.Entity<Models.Type>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Type__3214EC07E72711B5");
 

@@ -14,5 +14,4 @@ public partial class Order
     public decimal? TotalPrice { get; set; }
 
     public string? DeliveryAddress { get; set; }
-
 }

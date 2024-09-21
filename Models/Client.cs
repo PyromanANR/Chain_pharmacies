@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Chain_pharmacies.Models;
 
@@ -15,5 +14,4 @@ public partial class Client
     public string? Receipts { get; set; }
 
     public virtual User? User { get; set; }
-
 }

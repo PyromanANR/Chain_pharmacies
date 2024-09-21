@@ -24,8 +24,4 @@ public partial class ProductPriceDiscount
 
         return discountedPrice;
     }
-
-
-
-
 }
