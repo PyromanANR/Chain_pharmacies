@@ -1,5 +1,5 @@
 # Chain_pharmacies
-#Class Diagram
+# Class Diagram
 ![class6 drawio](https://github.com/user-attachments/assets/7308ccf7-26d4-4aad-9202-9f8c08c6b88d)
 # State diagram
 ![stan drawio (1)](https://github.com/user-attachments/assets/fed4c46e-0970-43e1-b9ea-80fe634df3bd)
